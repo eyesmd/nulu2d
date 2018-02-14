@@ -1,0 +1,136 @@
+% --------------------------------------------------
+% PREAMBLE -----------------------------------------
+% --------------------------------------------------
+\documentclass{article}
+    
+% DOCUMENT
+    \setlength{\parskip}{1.3ex plus 0.2ex minus 0.2ex}
+\usepackage{geometry} % Page layout
+    \geometry{
+        paper=a4paper,
+        tmargin=3.5cm,
+        bmargin=3.5cm,
+        lmargin=3cm,
+        rmargin=3cm,
+        headheight = 12pt,
+        headsep = 30pt,
+        footskip = 35pt
+    }
+\usepackage{fancyhdr} % Headers
+    % * 'fancyhead' and 'fancyfoot' writes to all fielsds
+    % * 'leftmark' and 'rightmark' have the info of two top-level sections
+    % * 'sectionmark', I don't know
+    \pagestyle{fancy}
+    \renewcommand{\sectionmark}[1]{\markboth{#1}{}}
+    \fancyhead{} 
+    \fancyfoot{}
+    \rhead{\nouppercase{\leftmark}}
+    \cfoot{\thepage / \pageref*{LastPage}}
+
+% ENCODING
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+
+% MATH
+\usepackage{amsmath} % Has everything
+\usepackage{amssymb} % Math symbols
+\usepackage{dsfont} % Domain font
+\usepackage{amsthm} % Theorems
+    \newtheorem*{teorema}{Teorema}
+    \newtheorem*{proposicion}{Proposición}
+
+% ALGORITHMS
+\usepackage{algorithm} % Algorithm floats
+    \floatname{algorithm}{Algoritmo}
+\usepackage{algorithmicx} % Macro definitions for algorithm typesetting
+\usepackage{algpseudocode} % Pseudocode package built with algorithmicx
+    \algrenewcommand\algorithmicrequire{\textbf{Requiere}}
+    \algrenewcommand\algorithmicensure{\textbf{Asegura}}
+
+% MISC
+\usepackage{graphicx} % Images
+\usepackage{lastpage} % Reference to last page
+\usepackage{enumitem} % List control
+\usepackage[draft]{todonotes} % Todo's
+\usepackage{hyperref} % Hyperlinks
+    \hypersetup{
+        colorlinks = true,
+        urlcolor = blue,
+        linkcolor = red,
+        citecolor = red
+    }
+\usepackage{lipsum} % Lorem Ipsum
+
+% FONTS
+% \renewcommand*\rmdefault{lmr} % Latin Modern Roman
+% \renewcommand*\rmdefault{ppl} % Palatino
+% \renewcommand*\rmdefault{pnc} % New Century Schoolbook
+% \renewcommand*\rmdefault{pbk} % Bookman
+% \renewcommand*\rmdefault{ptm} % Times
+% \renewcommand*\rmdefault{iwona} %	Iwona
+% \renewcommand{\familydefault}{pplj} 
+% \usepackage{fouriernc} % New Century Schoolbook (math mode)
+
+
+% ---------------------------------------------------
+% MAIN ----------------------------------------------
+% ---------------------------------------------------
+
+\begin{document}
+
+\subsection*{Intersección de Lineas}
+
+Maneras de representar una linea 2D:
+\begin{itemize}
+    \item Ecuación explícita ($y = ax + b \quad a, b \in \mathds{R}$)
+    \item Ecuación implícita ($ax + by = c \quad a, b, c \in \mathds{R}$)
+    \item Paramétrica ($c + tv \quad c, v \in \mathds{R}^2$)
+    \item Par de puntos
+\end{itemize}
+
+Para lineas y puntos voy a guardar dos puntos, porque es una forma bastante natural de guardar una linea, pero para cualquier cálculo voy a apelar a la forma \textit{vectorial} (cuyo pasaje es trivial). La forma explícita no es muy recomendable porque no puede representar rectas verticales, lo que es un bodrio. La ecuación explícita parece más copada, la he vista usarse en notebooks de programación competitiva. Pero no es muy bonita.
+
+Dado dos lineas representadas de la forma vectorial, para encontrar la intersección planteamos la ecuación
+\begin{equation*}
+    c + vx = d + wy
+\end{equation*}
+
+Equivalente a 
+\begin{align*}
+    v_1x - w_1y &= d_1 - c_1 \\
+    v_2x - w_2y &= d_2 - c_2
+\end{align*}
+
+Esta sistema puede resolverse de manera con el método de Gauss, que no es tan terrible, pero hay una forma más rápida (sacada de \textit{topcoder}). En principio hay que darse cuenta de que el determinante de este sistema es $0$, si y solo si las rectas son paralelas. En segundo, haciendo un poquito más de magia al manejar las ecuaciones podemos despejar sin tener que evitar divisiones por ceros, ni hacer backwards substitutions):
+\begin{align*}
+    w_2 v_1x - w_2 w_1y = w_2 (d_1 - c_1) \\
+    w_1 v_2x - w_1 w_2y = w_1 (d_2 - c_2)
+\end{align*}
+\begin{align*}
+    w_2 v_1x - w_1 v_2x &= w_2 (d_1 - c_1) - w_1 (d_2 - c_2) \\
+                      x &= \frac{w_2 (d_1 - c_1) - w_1 (d_2 - c_2)}{-det}
+\end{align*}
+
+El pseudo de la rutina sería:
+\begin{algorithmic} \\
+\Function{scalar\_intersection}{$C, V, D, W$}
+    \State $ndet \gets V.x*W.y - V.y*W.x$         \Comment ¡Es $-det$, no $det$!
+    \If {$ndet \approx 0}$
+        \State \Return $nil$
+    \Else
+        \State $x \gets (W.y * (D.x - C.x) - W.x * (D.y - C.y)) / (ndet)$
+        \State $y \gets (V.y * (D.x - C.x) - V.x * (D.y - C.y)) / (ndet)$
+        \State \Return $x, y$
+    \EndIf
+\EndFunction        
+\end{algorithmic}
+
+Para obtener el punto en sí basta con meter $x$ o $y$ en las fórmulas de las rectas correspondientes.
+
+La gracia de todo esto es que es muy facil extenderlo a segmentos (en donde $c$ marca un extremo del segmento y $v$ el vector de dicho extremo al otro). Los $x$ e $y$ se utilizarían para verificar que el punto de la intersección se encuentre adentro de los segmentos, cosa que sólo ocurre cuando $x, y \in [0, 1]$ (rango en el que están definidos los segmentos).
+
+\subsection*{Proyección}
+
+Productos escalares, bitch
+
+\end{document}

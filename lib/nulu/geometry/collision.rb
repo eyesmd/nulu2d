@@ -1,0 +1,82 @@
+module Nulu
+
+  module Collision
+    def self.collides?(a, b)
+      self.mtv(a, b)
+    end
+
+    # wait, so vector is a thing even without physics
+    # it should be a copy of a Point
+  
+    # returns minimum push vector it must be applied to b to separate
+    # a and b, yielding nil if they're not intersecting
+    def self.mtv(a, b)
+      mtv = Point.new(INF, INF)
+      axes = (a.segments + b.segments).map(&:direction)
+                                      .map(&:perp).map(&:unit)
+      axes.each do |axis|
+        # shape projection
+        mina, maxa = a.vertex.map{ |v| v * axis }.minmax
+        minb, maxb = b.vertex.map{ |v| v * axis }.minmax
+
+        o = 0       # overlap
+        neg = false # direction (relative to axis)
+
+        # ensuring mina < minb
+        unless mina < minb
+          mina, maxa = -maxa, -mina
+          minb, maxb = -maxb, -minb
+          neg = !neg
+        end
+
+        # find overlap
+        if maxb <= maxa # containment
+          o = maxb - minb
+          if minb - mina < maxa - maxb
+            o += minb - mina
+          else
+            o += maxa - maxb
+            neg = !neg
+          end
+        elsif minb <= maxa # intersection
+          o = maxa - minb
+        else # separated
+          return nil
+        end
+
+        # mtv update
+        if o < mtv.norm
+          mtv = axis * (neg ? -o : o)
+        end
+      end
+
+      return mtv
+    end
+
+    def self.linear_intersection(la, lb)
+      t1, t2 = scalar_intersection(la, lb)
+      if t1 && (t1 >= 0 - EPS && t1 <= 1 + EPS) &&
+               (t2 >= 0 - EPS && t2 <= 1 + EPS)
+        return la.a + (la.b - la.a) * t1
+      else
+        return nil
+      end
+    end
+  
+    def self.scalar_intersection(la, lb)
+      c = la.center
+      v = la.direction
+      d = lb.center
+      w = lb.direction
+
+      ndet = v.x * w.y - v.y * w.x
+      if ndet.abs > EPS
+        return ((w.y * (d.x - c.x) - w.x * (d.y - c.y)) / ndet),
+               ((v.y * (d.x - c.x) - v.x * (d.y - c.y)) / ndet)
+      else
+        return nil
+      end
+    end
+  end
+
+end
