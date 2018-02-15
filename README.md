@@ -1,14 +1,14 @@
 # 2D Engine Nulu
 
-A handcrafted 2d engine being written in Ruby for personal use. I'm worried mostly about design and readabilty for educational purposes (but performance will naturally be a factor as well).
+A handcrafted 2d engine being written in Ruby for personal use. I'm worried mostly about design and readability for educational purposes.
 
 ## Geometry
 
 Geometry group:
 
-* Point
+* Point (alias Vector)
 * Segment
-* Polygon
+* Polygon (Convex)
 * Particular Polygons: Circle, Rectangle, Square
 * Compound Polygons: Union, Intersection, Complement
 * Collision
@@ -20,11 +20,9 @@ Point and Segment are primitives to build more complex types. The main type of t
 The Collision module will hold all the code related to calculating intersections and collisions between different objects. The 'collides?' rutine will only deal with Polygons, since only them are considered actual 2D shapes (even though it may make sense to ask wheter a segment is colliding with a shape). In the 'intersects?' and 'included?' rutine we see polygons as outlines, so it accepts points and lines as well as shapes/polygons.
 
 ## Roadmap
-* Transformation operations on polygons (and maybe segments)
-* Complete dragging operation in sandbox
-* Refactor sandbox for different modes
-* Test collision detection on sandbox
-* Start with the Physics module
+* Start with the Physics module (objects bouncing off of each other)
 
 ## Leftovers
 * Investigate how dependencies ought to be dealt with in Ruby (gosu in sandbox.rb) 
+* Refactor sproject adn vproject to sproject_to and vproject_to
+* Other colision checks: Contains over shapes and segments? Intersects between segments?
