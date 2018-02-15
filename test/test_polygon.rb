@@ -43,4 +43,14 @@ class TestPolygon < Minitest::Test
                           Nulu::Point.new(0, 1))
     assert_equal Nulu::Point.new(1, 0.5), p.center
   end
+
+  def test_move
+    p = Nulu::Polygon.new(Nulu::Point.new(0, 0),
+                          Nulu::Point.new(2, 0),
+                          Nulu::Point.new(2, 1),
+                          Nulu::Point.new(0, 1))
+    p.move(Nulu::Point.new(1, -1))
+    assert_equal Nulu::Point.new(1, -1), p.vertex.first
+    assert_equal Nulu::Point.new(1, 0), p.vertex.last
+  end
 end

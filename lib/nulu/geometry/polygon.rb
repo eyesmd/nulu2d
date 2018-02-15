@@ -49,6 +49,12 @@ module Nulu
     def center
       @vertex.reduce(&:sum) / @vertex.size
     end
+
+
+    ## Transformation
+    def move(v)
+      @vertex.map!{|p| p + v}
+    end
   end
 
 end
