@@ -53,6 +53,25 @@ module Nulu
       return mtv
     end
 
+    def self.contains?(shape, point)
+      shape_point = shape.center
+      shape.segments.each do |segment|
+        orthogonal = segment.direction.perp.unit
+
+        axis_projection = segment.a.sproject(orthogonal)
+        shape_point_projection = shape_point.sproject(orthogonal)
+        point_projection = point.sproject(orthogonal)
+
+        shape_point_difference = shape_point_projection - axis_projection
+        point_difference = point_projection - axis_projection
+
+        if point_difference * shape_point_difference < 0 # different sign
+          return false
+        end
+      end
+      return true
+    end
+
     def self.linear_intersection(la, lb)
       t1, t2 = scalar_intersection(la, lb)
       if t1 && (t1 >= 0 - EPS && t1 <= 1 + EPS) &&
