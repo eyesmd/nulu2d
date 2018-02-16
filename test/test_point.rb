@@ -86,18 +86,18 @@ class TestPoint < Minitest::Test
   def test_projection_regular
     p1 = Nulu::Point.new(1, 1).unit()
     p2 = Nulu::Point.new(1, 0)
-    assert_in_delta Math.cos(Math::PI/4), p1.sproject(p2)
-    assert_in_delta Math.cos(Math::PI/4), p2.sproject(p1)
-    assert Nulu::Point.new(Math.cos(Math::PI/4), 0), p1.vproject(p2)
+    assert_in_delta Math.cos(Math::PI/4), p1.sproject_to(p2)
+    assert_in_delta Math.cos(Math::PI/4), p2.sproject_to(p1)
+    assert Nulu::Point.new(Math.cos(Math::PI/4), 0), p1.vproject_to(p2)
   end
 
   def test_projection_parallel
     p1 = Nulu::Point.new(1, 1).unit()
     p2 = Nulu::Point.new(1, 1).unit() / 2
-    assert_in_delta 1, p1.sproject(p2)
-    assert_in_delta 0.5, p2.sproject(p1)
-    assert p1, p1.vproject(p2)
-    assert p2, p2.vproject(p1)
+    assert_in_delta 1, p1.sproject_to(p2)
+    assert_in_delta 0.5, p2.sproject_to(p1)
+    assert p1, p1.vproject_to(p2)
+    assert p2, p2.vproject_to(p1)
   end
 
   def test_zero_fail

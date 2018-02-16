@@ -85,7 +85,7 @@ module Nulu
       @y += p.y
     end
   
-    def unit()
+    def unit
       self / norm()
     end
 
@@ -98,16 +98,16 @@ module Nulu
       end
     end
 
-    def zero?()
+    def zero?
       @x.abs < EPS && @y.abs < EPS
     end
 
-    def sproject(p)
+    def sproject_to(p)
       self * p.unit()
     end
 
-    def vproject(p)
-      p.unit() * sproject(p)
+    def vproject_to(p)
+      p.unit() * sproject_to(p)
     end
 
     def trim(scalar)

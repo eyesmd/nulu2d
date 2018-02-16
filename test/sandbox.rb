@@ -45,7 +45,7 @@ class Sandbox < Gosu::Window
 
     (0...polygons.size).each do |i|
       (i+1...polygons.size).each do |j|
-        if Nulu::Collision::collides?(polygons[i], polygons[j])
+        if Nulu::Collision::colliding?(polygons[i], polygons[j])
           mtv = Nulu::Collision::mtv(polygons[i], polygons[j])
           draw_segment(Nulu::Segment.new(polygons[j].center, polygons[j].center + mtv), Gosu::Color::GREEN)
           draw_point(polygons[j].center, Gosu::Color::GREEN)
@@ -154,7 +154,7 @@ class Sandbox < Gosu::Window
     mouse = Nulu::Point.new(mouse_x, mouse_y)
     if id == Gosu::MS_LEFT
       polygons.each do |p|
-        if Nulu::Collision.contains?(p, mouse)
+        if Nulu::Collision.containing?(p, mouse)
           self.selected_polygon = p
           self.drag_start = mouse
           return

@@ -125,7 +125,7 @@ class TestCollision < Minitest::Unit::TestCase
                               Nulu::Point.new(1, 3),
                               Nulu::Point.new(0, 2))
     point = Nulu::Point.new(0.5 - 0.1, 0.5 - 0.1)
-    assert_equal false, Nulu::Collision::contains?(shape, point)
+    assert_equal false, Nulu::Collision::containing?(shape, point)
   end
 
   def test_contains_true
@@ -138,6 +138,6 @@ class TestCollision < Minitest::Unit::TestCase
                               Nulu::Point.new(1, 3),
                               Nulu::Point.new(0, 2))
     point = Nulu::Point.new(0.5 + 0.1, 0.5 + 0.1)
-    assert_equal true, Nulu::Collision::contains?(shape, point)
+    assert_equal true, Nulu::Collision::containing?(shape, point)
   end
 end

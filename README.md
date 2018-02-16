@@ -21,8 +21,10 @@ The Collision module will hold all the code related to calculating intersections
 
 ## Roadmap
 * Start with the Physics module (objects bouncing off of each other)
+* Implement containing? (shapes, segments and points (non-shapes at the right is valid, thought it yields always false))
+* Implement intersecting? (shapes, segments and points (points intersect with segments if they belong to them))
+
 
 ## Leftovers
-* Investigate how dependencies ought to be dealt with in Ruby (gosu in sandbox.rb) 
-* Refactor sproject adn vproject to sproject_to and vproject_to
-* Other colision checks: Contains over shapes and segments? Intersects between segments?
+* Investigate how dependencies ought to be dealt with in Ruby (gosu in sandbox.rb)
+* Note how point containment wasn't done with raycasting
