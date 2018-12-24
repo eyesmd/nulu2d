@@ -47,7 +47,7 @@ module Nulu
     end
 
     def center
-      @vertex.reduce(&:sum) / @vertex.size
+      @vertex.reduce(&:+) / @vertex.size
     end
 
 

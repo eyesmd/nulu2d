@@ -1,0 +1,5 @@
+require_relative "point"
+require_relative "vector"
+require_relative "segment"
+require_relative "polygon"
+require_relative "collision"

@@ -5,11 +5,9 @@ module Nulu
       self.mtv(a, b)
     end
 
-    # wait, so vector is a thing even without physics
-    # it should be a copy of a Point
-  
     # returns minimum push vector it must be applied to b to separate
     # a and b, yielding nil if they're not intersecting
+    # ONLY WORKS WITH CONVEX POLYGONS (I'd need to verify so in the sandbox)
     def self.mtv(a, b)
       mtv = Point.new(INF, INF)
       axes = (a.segments + b.segments).map(&:direction)

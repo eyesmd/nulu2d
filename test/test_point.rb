@@ -24,6 +24,12 @@ class TestPoint < Minitest::Test
     p = Nulu::Point.new(-1, -1)
     assert_in_delta (Math::PI*5.0/4.0), p.angle
     assert_in_delta Math::sqrt(2), p.norm
+
+    p = Nulu::Point.new(1, 0.001)
+    assert_in_delta 0, p.angle
+
+    p = Nulu::Point.new(1, -0.001)
+    assert_in_delta (2.0*Math::PI), p.angle
   end
 
   def test_polar_write
@@ -32,6 +38,22 @@ class TestPoint < Minitest::Test
     p.angle = Math::PI/4
     assert_in_delta p.x, 0.707
     assert_in_delta p.y, 0.707
+
+    p.angle = 0
+    assert_in_delta p.x, 1.0
+    assert_in_delta p.y, 0.0
+
+    p.angle = (2.0*Math::PI - 0.1)
+    assert_in_delta p.x, 0.995
+    assert_in_delta p.y, -0.099
+
+    p.angle = (2.0*Math::PI)
+    assert_in_delta p.x, 1.0
+    assert_in_delta p.y, 0.0
+
+    p.angle = (4.0*Math::PI)
+    assert_in_delta p.x, 1.0
+    assert_in_delta p.y, 0.0
   end
 
   def test_point_to
@@ -100,14 +122,9 @@ class TestPoint < Minitest::Test
     assert p2, p2.vproject_to(p1)
   end
 
-  def test_zero_fail
-    p = Nulu::Point.new(0, -1)
-    assert !p.zero?
-  end
-
-  def test_zero_sucess
-    p = Nulu::Point.new(0, 0)
-    assert p.zero?
+  def test_zero
+    assert !Nulu::Point.new(0, -1).zero?
+    assert Nulu::Point.new(0, 0).zero?
   end
 
   def test_unit

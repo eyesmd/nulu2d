@@ -114,10 +114,6 @@ module Nulu
       self.norm = Float(scalar) if norm > scalar
     end
 
-    def sum(b)
-      self + b
-    end
-
     
     ## Comparisons
     def ==(p)
