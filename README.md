@@ -1,30 +1,14 @@
-# 2D Engine Nulu
+# Nulu2D
 
-A handcrafted 2d engine being written in Ruby for personal use. I'm worried mostly about design and readability for educational purposes.
+<img src="https://raw.githubusercontent.com/eyesmd/nulu2d/master/readme/wip.jpg" width="250" height="250" align="right">
 
-## Geometry
+## Introduction
 
-Geometry group:
+Nulu2D is a soon to be physics engine for game design. The idea is not to have a full-blown physics simulator, but rather a helper library with a flexible interface that allows to easily break laws when needed, as games tends to do. The current scope is to handle basic rigid body dynamics (without getting into joints).
 
-* Point (alias Vector)
-* Segment
-* Polygon (Convex)
-* Particular Polygons: Circle, Rectangle, Square
-* Compound Polygons: Union, Intersection, Complement
-* Collision
-  * collides? (between polygons only)
-  * intersects? included? (between shapes interpreted as lines, segments and points)
+I'm coding in Ruby for quick development, but I eventually want to migrate to C for performance.
 
-Point and Segment are primitives to build more complex types. The main type of this pseudo-module is Polygon, from where each particular shape will be derived from (curves will be aproximated). A Polygon will have to be convex so that the Collision module gives proper results. The idea is to use Compound Polygons to create concave shapes, but that idea is very hazy right now.
+## References
 
-The Collision module will hold all the code related to calculating intersections and collisions between different objects. The 'collides?' rutine will only deal with Polygons, since only them are considered actual 2D shapes (even though it may make sense to ask wheter a segment is colliding with a shape). In the 'intersects?' and 'included?' rutine we see polygons as outlines, so it accepts points and lines as well as shapes/polygons.
-
-## Roadmap
-* Start with the Physics module (objects bouncing off of each other)
-* Implement containing? (shapes, segments and points (non-shapes at the right is valid, thought it yields always false))
-* Implement intersecting? (shapes, segments and points (points intersect with segments if they belong to them))
-
-
-## Leftovers
-* Investigate how dependencies ought to be dealt with in Ruby (gosu in sandbox.rb)
-* Note how point containment wasn't done with raycasting
+* Olivier Renault's [*2D polygon-based collision detection and response*](https://htmlpreview.github.io/?https://github.com/eyesmd/nulu2d/blob/master/refs/2D%20polygon-based%20collision%20detection%20and%20response.htm) ([original url](http://elancev.name/oliver/2D%20polygon.htm))
+* Chris Hecker's [rigid body dynamics' articles](http://chrishecker.com/Rigid_Body_Dynamics) on Game Developer Magazine
