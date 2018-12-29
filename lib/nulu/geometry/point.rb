@@ -114,6 +114,13 @@ module Nulu
       self.norm = Float(scalar) if norm > scalar
     end
 
+    # decomposes self into orthogonal vectors
+    # [parallel to 'v', perpendicular to 'v']
+    def decompose(v)
+      parallel_decomposition = vproject_to(v)
+      return [parallel_decomposition, self - parallel_decomposition]
+    end
+
     
     ## Comparisons
     def ==(p)
