@@ -37,11 +37,11 @@ module Nulu
     end
 
     def parallel?(seg)
-      (self.direction ** seg.direction).abs < EPS
+      self.direction.parallel?(seg.direction)
     end
   
     def perpendicular?(seg)
-      (self.direction * seg.direction).abs < EPS
+      self.direction.perpendicular?(seg.direction)
     end
   end
 end 

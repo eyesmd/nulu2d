@@ -146,6 +146,24 @@ class TestPoint < Minitest::Test
     assert Math::sqrt(3**2+4**2), v1.distance(v2)
   end
 
+  def test_parallel
+    v1 = Nulu::Point.new(1, 1)
+    v2 = Nulu::Point.new(-1, -1)
+    assert !v1.perpendicular?(v1)
+    assert !v1.perpendicular?(v2)
+    assert v1.parallel?(v2)
+    assert v2.parallel?(v1)
+  end
+
+  def test_comparisons_perpendicular
+    v1 = Nulu::Point.new(1, 1)
+    v2 = Nulu::Point.new(1, -1)
+    assert !v1.parallel?(v2)
+    assert !v2.parallel?(v1)
+    assert v1.perpendicular?(v2)
+    assert v2.perpendicular?(v1)
+  end
+
   def test_decomposition
     # regular
     parallel, perpendicular = Nulu::Point.new(1, 0).decompose(Nulu::Point.new(1, 0))

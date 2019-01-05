@@ -1,6 +1,7 @@
 module Nulu
 
   class Point
+    
     ## Initialization
     def initialize(x=0, y=0)
       @x = Float(x)
@@ -129,6 +130,14 @@ module Nulu
   
     def distance(p)
       (self - p).norm
+    end
+
+    def parallel?(v)
+      (self ** v).abs < EPS
+    end
+  
+    def perpendicular?(v)
+      (self * v).abs < EPS
     end
   end
 
