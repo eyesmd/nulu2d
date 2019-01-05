@@ -53,6 +53,7 @@ module Nulu
       self + (-p)
     end
     
+    # Scalar product
     def *(arg)
       # TODO: define the operation correctly upon Numeric * Point (should I extend Numeric?)
       if arg.is_a?(Numeric)
@@ -64,6 +65,7 @@ module Nulu
       end
     end
 
+    # Vector product
     def **(arg)
       @x * arg.y - @y * arg.x
     end
@@ -81,11 +83,6 @@ module Nulu
       @x = Math::cos(angle) * Float(norm)
       @y = Math::sin(angle) * Float(norm)
     end
-    
-    def apply(p)
-      @x += p.x
-      @y += p.y
-    end
   
     def unit
       self / norm()
@@ -100,10 +97,12 @@ module Nulu
       @x.abs < EPS && @y.abs < EPS
     end
 
+    # Scalar projection
     def sproject_to(p)
       self * p.unit()
     end
 
+    # Vector projection
     def vproject_to(p)
       p.unit() * sproject_to(p)
     end
@@ -114,7 +113,7 @@ module Nulu
 
     # decomposes self into orthogonal vectors
     # [parallel to 'v', perpendicular to 'v']
-    def decompose(v)
+    def decompose_into(v)
       parallel_decomposition = vproject_to(v)
       return [parallel_decomposition, self - parallel_decomposition]
     end

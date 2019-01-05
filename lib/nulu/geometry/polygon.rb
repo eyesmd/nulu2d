@@ -4,7 +4,6 @@ module Nulu
     
     ## Initialization
     def initialize(*vertex)
-      @anchor = Point.new(0, 0)
       unless vertex.size() >= 3
         raise "Invalid initialization of Polygon (too few arguments)"
       end
@@ -16,7 +15,7 @@ module Nulu
 
 
     ## Accesors
-    attr_accessor :anchor, :vertex
+    attr_accessor :vertex
 
     def segments
       segments = Array.new
@@ -51,10 +50,54 @@ module Nulu
       @vertex.reduce(&:+) / @vertex.size
     end
 
+    def left
+      @vertex.map(&:x).min
+    end
+
+    def right
+      @vertex.map(&:x).max
+    end
+
+    def bottom
+      @vertex.map(&:y).min
+    end
+
+    def top
+      @vertex.map(&:y).max
+    end
+
+    def center=(new_center)
+      self.move(new_center - self.center)
+    end
+
+    def left=(new_left)
+      self.move_x(new_left - self.left)
+    end
+
+    def right=(new_right)
+      self.move_x(new_right - self.right)
+    end
+
+    def bottom=(new_bottom)
+      self.move_y(new_bottom - self.bottom)
+    end
+
+    def top=(new_top)
+      self.move_y(new_top - self.top)
+    end
+
 
     ## Transformation
     def move(v)
       @vertex.map!{|p| p + v}
+    end
+
+    def move_x(ox)
+      @vertex.each{|p| p.x += ox}
+    end
+
+    def move_y(oy)
+      @vertex.each{|p| p.y += oy}
     end
   end
 

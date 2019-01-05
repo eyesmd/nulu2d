@@ -63,13 +63,6 @@ class TestPoint < Minitest::Test
     assert_equal p.y, 4
   end
 
-  def test_apply
-    p = Nulu::Point.new(3, 4)
-    p.apply(Nulu::Point.new(2, 1))
-    assert_equal p.x, 5
-    assert_equal p.y, 5
-  end
-
   def test_operators_sum
     v1 = Nulu::Point.new(2, 2)
     v2 = Nulu::Point.new(1, -3)
@@ -166,27 +159,27 @@ class TestPoint < Minitest::Test
 
   def test_decomposition
     # regular
-    parallel, perpendicular = Nulu::Point.new(1, 0).decompose(Nulu::Point.new(1, 0))
+    parallel, perpendicular = Nulu::Point.new(1, 0).decompose_into(Nulu::Point.new(1, 0))
     assert_equal Nulu::Point.new(1, 0), parallel
     assert_equal Nulu::Point.new(0, 0), perpendicular
 
     # opposite
-    parallel, perpendicular = Nulu::Point.new(1, 0).decompose(Nulu::Point.new(-1, 0))
+    parallel, perpendicular = Nulu::Point.new(1, 0).decompose_into(Nulu::Point.new(-1, 0))
     assert_equal Nulu::Point.new(1, 0), parallel
     assert_equal Nulu::Point.new(0, 0), perpendicular
 
     # vertical
-    parallel, perpendicular = Nulu::Point.new(1, 0).decompose(Nulu::Point.new(0, 1))
+    parallel, perpendicular = Nulu::Point.new(1, 0).decompose_into(Nulu::Point.new(0, 1))
     assert_equal Nulu::Point.new(0, 0), parallel
     assert_equal Nulu::Point.new(1, 0), perpendicular
 
     # both directions
-    parallel, perpendicular = Nulu::Point.new(1, 1).decompose(Nulu::Point.new(0, 1))
+    parallel, perpendicular = Nulu::Point.new(1, 1).decompose_into(Nulu::Point.new(0, 1))
     assert_equal Nulu::Point.new(0, 1), parallel
     assert_equal Nulu::Point.new(1, 0), perpendicular
 
     # diagonal parallel
-    parallel, perpendicular = Nulu::Point.new(1, 0).decompose(Nulu::Point.new(1, 1))
+    parallel, perpendicular = Nulu::Point.new(1, 0).decompose_into(Nulu::Point.new(1, 1))
     assert_equal Nulu::Point.new(0.5, 0.5), parallel
     assert_equal Nulu::Point.new(0.5, -0.5), perpendicular
   end
