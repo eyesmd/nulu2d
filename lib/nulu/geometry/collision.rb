@@ -5,9 +5,10 @@ module Nulu
       self.mtv(a, b)
     end
 
-    # returns minimum push vector it must be applied to b to separate
-    # a and b, yielding nil if they're not intersecting
-    # ONLY WORKS WITH CONVEX POLYGONS (I'd need to verify so in the sandbox)
+    # Returns the 'minimum translation vector' that must be applied to b to separate
+    # a and b from each other, yielding nil if they're not intersecting.
+    # The SAT algorithm is used (following Olivier Renault's guide, see README)
+    # Note that it only works with *convex* polygons.
     def self.mtv(a, b)
       mtv = Point.new(INF, INF)
       axes = (a.segments + b.segments).map(&:direction)
@@ -51,6 +52,7 @@ module Nulu
       return mtv
     end
 
+    # Returns whether 'shape' contains 'point'
     def self.containing?(shape, point)
       shape_point = shape.center
       shape.segments.each do |segment|
@@ -70,6 +72,7 @@ module Nulu
       return true
     end
 
+    # Returns the point on which two segments intersect, or nil if they don't
     def self.linear_intersection(la, lb)
       t1, t2 = scalar_intersection(la, lb)
       if t1 && (t1 >= 0 - EPS && t1 <= 1 + EPS) &&
@@ -80,6 +83,11 @@ module Nulu
       end
     end
   
+    # Returns a scalar for each segment, which is the value at which 
+    # the parametric form of the segment must be evaluated to, to yield
+    # the intersection between the segments
+    # (from maxx.ru, the algo consists of solving a 2x2 equation of the
+    # segments's parametric equations)
     def self.scalar_intersection(la, lb)
       c = la.center
       v = la.direction

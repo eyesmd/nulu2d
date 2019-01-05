@@ -1,7 +1,7 @@
 module Nulu
 
   class Point
-    
+
     ## Initialization
     def initialize(x=0, y=0)
       @x = Float(x)
@@ -32,11 +32,11 @@ module Nulu
     end
     
     def angle=(angle)
-      direct_to(angle, norm())
+      direct_to(angle, self.norm)
     end
     
     def norm=(norm)
-      direct_to(angle(), norm)
+      direct_to(self.angle, norm)
     end
     
   
@@ -54,6 +54,7 @@ module Nulu
     end
     
     def *(arg)
+      # TODO: define the operation correctly upon Numeric * Point (should I extend Numeric?)
       if arg.is_a?(Numeric)
         return Point.new(@x * arg, @y * arg)
       elsif arg.is_a?(Point)
@@ -64,7 +65,7 @@ module Nulu
     end
 
     def **(arg)
-      return @x * arg.y - @y * arg.x
+      @x * arg.y - @y * arg.x
     end
     
     def /(scalar)
@@ -90,13 +91,9 @@ module Nulu
       self / norm()
     end
 
-    # 90 degrees to the right
+    # 90 degrees to the right by default
     def perp(left=false)
-      if left
-        Point.new(-@y, @x)
-      else
-        Point.new(@y, -@x)
-      end
+      left ? Point.new(-@y, @x) : Point.new(@y, -@x)
     end
 
     def zero?

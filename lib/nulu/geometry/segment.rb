@@ -1,6 +1,7 @@
 module Nulu
 
   class Segment
+    
     ## Initialization
     def initialize(a=Point.new(), b=Point.new())
       @a = a

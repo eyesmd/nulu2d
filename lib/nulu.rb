@@ -1,3 +1,7 @@
 require_relative 'nulu/constants'
-require_relative 'nulu/geometry/geometry'
+require_relative 'nulu/geometry/point'
+require_relative 'nulu/geometry/vector'
+require_relative 'nulu/geometry/segment'
+require_relative 'nulu/geometry/polygon'
+require_relative 'nulu/geometry/collision'
 require_relative 'nulu/physics/xxx'

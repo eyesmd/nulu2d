@@ -1,6 +1,7 @@
 module Nulu
 
   class Polygon
+    
     ## Initialization
     def initialize(*vertex)
       @anchor = Point.new(0, 0)
