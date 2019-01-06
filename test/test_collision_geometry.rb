@@ -1,7 +1,7 @@
 require "minitest/autorun"
 require_relative "../lib/nulu"
 
-class TestCollision < Minitest::Unit::TestCase
+class TestCollision < Minitest::Test
   def test_scalar_intersection_regular
     l1 = Nulu::Segment.make(:center => Nulu::Point.new(0, 0),
                             :direction => Nulu::Point.new(-0.5, -1))
