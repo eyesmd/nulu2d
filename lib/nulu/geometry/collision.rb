@@ -43,6 +43,9 @@ module Nulu
           return nil
         end
 
+        # assure separation
+        o += 1e-9
+
         # mtv update
         if o < mtv.norm
           mtv = axis * (neg ? -o : o)

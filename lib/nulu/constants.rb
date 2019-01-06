@@ -1,6 +1,6 @@
 module Nulu
 
-  EPS = 1e-9
+  EPS = 1e-6
   INF = Float::INFINITY
 
 end

@@ -164,6 +164,24 @@ class TestXXX < Minitest::Unit::TestCase
     assert_equal nil, Nulu::XXX::get_collision_time(p, Nulu::Vector.new(1.0, 1.0), q, Nulu::Vector.new(5.0, 0.0))
   end
 
+#  def test_outline_false_collision
+#    p = Nulu::Polygon.new(Nulu::Point.new(662.0005500000011, 275.99999999999994),
+#                          Nulu::Point.new(762.0005500000011, 275.99999999999994),
+#                          Nulu::Point.new(762.0005500000011, 426.0),
+#                          Nulu::Point.new(662.0005500000011, 426.0))
+#    p_velocity = Nulu::Point.new(0.0, 4.0)
+#
+#    q = Nulu::Polygon.new(Nulu::Point.new(111.99945000000014, 426.0),
+#                          Nulu::Point.new(911.9994499999989, 426.0),
+#                          Nulu::Point.new(911.9994499999989, 626.0),
+#                          Nulu::Point.new(111.99945000000014, 626.0))
+#    q_velocity = Nulu::Point.new(0.0, 0.0)
+#
+#    assert_equal nil, Nulu::XXX::get_collision_time(p, p_velocity, q, q_velocity)
+#    assert_false Nulu::Collision::colliding?(p, q)
+#    assert_equal Nulu::Point.new(0, 0), Nulu::Collision::mtv(p, q)
+#  end
+
 
 
 end
