@@ -55,10 +55,10 @@ module Nulu
         # Find earliest collision
         earliest_collision_time = nil
         earliest_collision_normal = nil
-        earliest_collision_actor_a = nil
-        earliest_collision_actor_b = nil
-        earliest_collision_actor_id_a = nil
-        earliest_collision_actor_id_b = nil
+        earliest_collision_entity_a = nil
+        earliest_collision_entity_b = nil
+        earliest_collision_entity_id_a = nil
+        earliest_collision_entity_id_b = nil
 
         @entity_pool.each do |id_a, a|
           @entity_pool.each do |id_b, b|
@@ -70,10 +70,10 @@ module Nulu
                 # earliest collision update
                 earliest_collision_time = collision_time
                 earliest_collision_normal = collision_normal
-                earliest_collision_actor_a = a
-                earliest_collision_actor_b = b
-                earliest_collision_actor_id_a = id_a
-                earliest_collision_actor_id_b = id_b
+                earliest_collision_entity_a = a
+                earliest_collision_entity_b = b
+                earliest_collision_entity_id_a = id_a
+                earliest_collision_entity_id_b = id_b
               end
             end
           end
@@ -86,18 +86,18 @@ module Nulu
           elapsed_time = time_left
         end
 
-        @entity_pool.each do |tag, actor|
-          actor.update(elapsed_time)
+        @entity_pool.each do |id, entity|
+          entity.move(entity.velocity * elapsed_time)
         end
 
         # Collision Response
         if earliest_collision_time && earliest_collision_normal
 
           # Renaming
-          a = earliest_collision_actor_a
-          b = earliest_collision_actor_b
-          id_a = earliest_collision_actor_id_a
-          id_b = earliest_collision_actor_id_b
+          a = earliest_collision_entity_a
+          b = earliest_collision_entity_b
+          id_a = earliest_collision_entity_id_a
+          id_b = earliest_collision_entity_id_b
 
           # Save (for normal calculation)
           prev_a_velocity = a.velocity.clone()
@@ -129,8 +129,8 @@ module Nulu
       end
 
       # If there's still time left, screw it, we ignore collisions and just do it
-      @entity_pool.each do |tag, actor|
-        actor.update(time_left)
+      @entity_pool.each do |id, entity|
+        entity.move(entity.velocity * time_left)
       end
       separate_entities()
 
