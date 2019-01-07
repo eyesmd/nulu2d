@@ -50,7 +50,7 @@ module Nulu
     end
     
     def -(p)
-      self + (-p)
+      Point.new(@x - p.x, @y - p.y)
     end
     
     # Scalar product

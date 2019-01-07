@@ -27,6 +27,7 @@ class Sandbox < Gosu::Window
   end
 
   def update
+    delta = ((Gosu.milliseconds() || 0) - @elapsed) / 100.0
     case self.mode
       when :create
         create_update
