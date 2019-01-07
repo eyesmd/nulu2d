@@ -1,6 +1,18 @@
 module Nulu
   class World
 
+    # Known Simulation Issues
+    # - In complex scenarios (example: object falling in a slope with finite mass), 
+    #   the iterations needed for a proper response provokes a significant slowdown
+    # - Not necesarily a problem, but multiple objects pushing one another get
+    #   correctly resolved via iterating
+    # - Friction is applied inmediatly upon object collision. In the current scheme
+    #   of collision resolving, this makes for 'non-deterministic' behaviour:
+    #   the overall result depends on which collisions are solved first (example:
+    #   upon A and B colliding: A colliding with floor, then A and B colliding, then
+    #   B colliding with floor; results in A and B colliding, but having different
+    #   velocities).
+
     COLLISION_LOOP_TRIES = 100
 
     def initialize()
