@@ -8,12 +8,14 @@ module Nulu
       @mass = Float(mass)
       @friction = Float(friction)
       @velocity = initial_velocity
+      @frictionless = false
     end
 
 
     ## Entity Accessors
     attr_accessor :velocity
     attr_accessor :mass, :friction
+    attr_accessor :frictionless
 
 
     ## Shape Readers

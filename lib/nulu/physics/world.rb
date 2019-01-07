@@ -112,7 +112,11 @@ module Nulu
           new_velocity_into_plane = a_velocity_into_plane * a_mass_ratio + b_velocity_into_plane * (1.0 - a_mass_ratio)
 
           # Velocity along plane (friction)
-          velocity_keep = (1.0 - a.friction) * (1.0 - b.friction)
+          if a.frictionless || b.frictionless
+            velocity_keep = 1.0
+          else 
+            velocity_keep = (1.0 - a.friction) * (1.0 - b.friction)
+          end
 
           # Apply velocity
           a.velocity = a_velocity_along_plane * velocity_keep + new_velocity_into_plane

@@ -56,7 +56,7 @@ class Sandbox < Gosu::Window
         @mc.mass = 0.0 if @mc.mass < 0.0
         puts(@mc.mass)
       when Gosu::KbZ
-        @mc.friction = (1.0 - @mc.friction)
+        @mc.frictionless = !@mc.frictionless
         puts(@mc.friction)
       when Gosu::KbX
         @mc.move_x(10)
