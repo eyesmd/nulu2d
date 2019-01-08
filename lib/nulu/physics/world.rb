@@ -6,41 +6,50 @@ module Nulu
     #   the iterations needed for a proper response provokes a significant slowdown
     # - Not necesarily a problem, but multiple objects pushing one another get
     #   correctly resolved via iterating
-    # - Friction is applied inmediatly upon object collision. In the current scheme
-    #   of collision resolving, this makes for 'non-deterministic' behaviour:
-    #   the overall result depends on which collisions are solved first (example:
-    #   upon A and B colliding: A colliding with floor, then A and B colliding, then
-    #   B colliding with floor; results in A and B colliding, but having different
-    #   velocities).
+    # - When objects push each other, they jitter: Friction is applied inmediatly
+    #   upon object collision. In the current scheme of collision resolving, this
+    #   makes for 'non-deterministic' behaviour: the overall result depends on which
+    #   collisions are solved first (example: upon A and B colliding: A colliding
+    #   with floor, then A and B colliding, then B colliding with floor; results
+    #   in A and B colliding, but having different velocities).
+    ##
 
     COLLISION_LOOP_TRIES = 100
 
     def initialize()
       @entity_pool = Hash.new()
+      @normals = Hash.new()
       @current_id = 0
     end
 
-    def add_entity(entity)
-      @entity_pool[@current_id] = entity
-      @current_id += 1
+    def make_entity(shape, mass, friction = 0.0)
+      entity = Entity.new(shape, mass, friction)
+      return add_and_return_controller_for(entity)
     end
 
-    def each_entity
-      @entity_pool.each do |id, entity|
-        yield(entity)
-      end
+    def make_static_entity(shape, friction = 0.0)
+      entity = Entity.new(shape, INF, friction)
+      entity.gravityless = true
+      return add_and_return_controller_for(entity)
     end
+
+
+    def get_entity_normal(id)
+      return @normals[id]
+    end
+
 
     def update(delta)
       # Gravity
       @entity_pool.each do |id, entity|
+        next if entity.gravityless
         entity.velocity.y -= 4
       end
 
       # Initialize normals
-      normals = Hash.new()
+      @normals.clear()
       @entity_pool.each do |id, entity|
-        normals[id] = Nulu::Vector.new(0, 0)
+        @normals[id] = Nulu::Vector.new(0, 0)
       end
 
       # Main loop
@@ -123,8 +132,8 @@ module Nulu
           b.velocity = b_velocity_along_plane * velocity_keep + new_velocity_into_plane
 
           # Normal calculation
-          normals[id_a] += a.velocity - prev_a_velocity
-          normals[id_b] += b.velocity - prev_b_velocity
+          @normals[id_a] += a.velocity - prev_a_velocity
+          @normals[id_b] += b.velocity - prev_b_velocity
         end
 
         # Advance cycle
@@ -169,5 +178,13 @@ module Nulu
         return a / (a + b)
       end
     end
+
+    def add_and_return_controller_for(entity)
+      @current_id += 1
+      id = @current_id - 1
+      @entity_pool[id] = entity
+      return EntityController.new(self, entity, id)
+    end
+
   end
 end

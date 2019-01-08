@@ -2,23 +2,20 @@ module Nulu
 
   class Entity
 
-    ## Initialization
-    def initialize(shape, mass, friction = 0.0, initial_velocity = Nulu::Vector.new(0, 0))
+    attr_accessor :shape
+    attr_accessor :velocity
+    attr_accessor :mass, :friction
+    attr_accessor :frictionless, :gravityless
+
+    def initialize(shape, mass, friction = 0.0)
       @shape = shape
       @mass = Float(mass)
       @friction = Float(friction)
-      @velocity = initial_velocity
+      @velocity = Nulu::Vector.new(0, 0)
       @frictionless = false
+      @gravityless = false
     end
 
-
-    ## Entity Accessors
-    attr_accessor :velocity
-    attr_accessor :mass, :friction
-    attr_accessor :frictionless
-
-
-    ## Shape Readers
     def width() @shape.width() end  
     def height() @shape.height() end
     def center() @shape.center() end
@@ -26,14 +23,6 @@ module Nulu
     def right() @shape.right() end
     def top() @shape.top() end
     def bottom() @shape.bottom() end
-
-    def shape # exposed for debug drawing!
-      @shape
-    end
-
-
-    # Shape Modifiers
-    # Should be used carefully, since they might mess with a World object!
     def center=(new_center) @shape.center = new_center end
     def left=(new_left) @shape.left = new_left end
     def right=(new_right) @shape.right = new_right end
@@ -42,6 +31,10 @@ module Nulu
     def move(offset) @shape.move(offset) end
     def move_x(offset_x) @shape.move_x(offset_x) end
     def move_y(offset_y) @shape.move_y(offset_y) end
+
+    def update(delta)
+      @shape.move(@velocity * delta)
+    end
 
   end
 end

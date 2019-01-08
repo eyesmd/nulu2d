@@ -9,22 +9,18 @@ class Sandbox < Gosu::Window
   def initialize
     super WIDTH, HEIGHT
     self.caption = "Sandbox"
-    @world = Nulu::World.new()
 
     @elapsed = 0
     @active_keys = []
 
-    @floor = Nulu::StaticEntity.new(Nulu::Rectangle.new(1500, 200, Nulu::Point.new(WIDTH / 2.0, HEIGHT - 650)), 0.3)
-    @mc = Nulu::Entity.new(Nulu::Rectangle.new(100, 100, Nulu::Point.new(WIDTH / 2.0 - 200, HEIGHT - 300)), 15)
+    @world = Nulu::World.new()
+    @mc = @world.make_entity(Nulu::Rectangle.new(100, 100, Nulu::Point.new(WIDTH / 2.0 - 200, HEIGHT - 300)), 15)
+    @floor = @world.make_static_entity(Nulu::Rectangle.new(1500, 200, Nulu::Point.new(WIDTH / 2.0, HEIGHT - 650)), 0.3)
 
     @objects = []
-    @objects << Nulu::Entity.new(Nulu::Rectangle.new(100, 150, Nulu::Point.new(WIDTH / 2.0, HEIGHT - 300)), 15)
-    #@objects << Nulu::StaticEntity.new(Nulu::Polygon.new(Nulu::Point.new(200, 0), Nulu::Point.new(200, 200), Nulu::Point.new(400, 0)))
-    @objects << Nulu::Entity.new(Nulu::Polygon.new(Nulu::Point.new(200, 0), Nulu::Point.new(200, 200), Nulu::Point.new(400, 0)), 15.0)
-    
-    @world.add_entity(@floor)
-    @world.add_entity(@mc)
-    @objects.each { |object| @world.add_entity(object) }
+    @objects << @mc
+    @objects << @floor
+    @objects << @world.make_entity(Nulu::Rectangle.new(100, 150, Nulu::Point.new(WIDTH / 2.0, HEIGHT - 300)), 15)
   end
 
   # LOOP
@@ -82,9 +78,10 @@ class Sandbox < Gosu::Window
 
   def draw
     Gosu.scale(CAMERA_ZOOM, -CAMERA_ZOOM, WIDTH/2, HEIGHT/2 - 100) do
-      @world.each_entity do |entity|
+      @objects.each do |entity|
         draw_polygon(entity.shape, Gosu::Color::WHITE)
         draw_segment(Nulu::Segment.new(entity.center, entity.center + entity.velocity), Gosu::Color::FUCHSIA)
+        draw_segment(Nulu::Segment.new(entity.center, entity.center + entity.normal), Gosu::Color::YELLOW)
       end
     end
   end
