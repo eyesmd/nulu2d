@@ -1,6 +1,6 @@
 module Nulu
 
-  class Entity
+  class FreeBody
 
     attr_accessor :shape
     attr_accessor :velocity

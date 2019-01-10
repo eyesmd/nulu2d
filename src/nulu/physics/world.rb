@@ -17,38 +17,38 @@ module Nulu
     COLLISION_LOOP_TRIES = 100
 
     def initialize()
-      @entity_pool = Hash.new()
+      @body_pool = Hash.new()
       @normals = Hash.new()
       @current_id = 0
     end
 
-    def make_entity(shape, mass, friction = 0.0)
-      entity = Entity.new(shape, mass, friction)
-      return add_and_return_controller_for(entity)
+    def make_body(shape, mass, friction = 0.0)
+      free_body = FreeBody.new(shape, mass, friction)
+      return add_and_return_restricted_body_for(free_body)
     end
 
-    def make_static_entity(shape, friction = 0.0)
-      entity = Entity.new(shape, INF, friction)
-      entity.gravityless = true
-      return add_and_return_controller_for(entity)
+    def make_static_body(shape, friction = 0.0)
+      free_body = FreeBody.new(shape, INF, friction)
+      free_body.gravityless = true
+      return add_and_return_restricted_body_for(free_body)
     end
 
 
-    def get_entity_normal(id)
+    def get_body_normal(id)
       return @normals[id]
     end
 
 
     def update(delta)
       # Gravity
-      @entity_pool.each do |id, entity|
-        next if entity.gravityless
-        entity.velocity.y -= 4
+      @body_pool.each do |id, body|
+        next if body.gravityless
+        body.velocity.y -= 4
       end
 
       # Initialize normals
       @normals.clear()
-      @entity_pool.each do |id, entity|
+      @body_pool.each do |id, body|
         @normals[id] = Nulu::Vector.new(0, 0)
       end
 
@@ -59,18 +59,18 @@ module Nulu
       while time_left >= 1e-3 && tries >= 0
 
         # Defensive separation
-        separate_entities()
+        separate_bodies()
 
         # Find earliest collision
         earliest_collision_time = nil
         earliest_collision_normal = nil
-        earliest_collision_entity_a = nil
-        earliest_collision_entity_b = nil
-        earliest_collision_entity_id_a = nil
-        earliest_collision_entity_id_b = nil
+        earliest_collision_body_a = nil
+        earliest_collision_body_b = nil
+        earliest_collision_body_id_a = nil
+        earliest_collision_body_id_b = nil
 
-        @entity_pool.each do |id_a, a|
-          @entity_pool.each do |id_b, b|
+        @body_pool.each do |id_a, a|
+          @body_pool.each do |id_b, b|
             next if a == b
             collision_time, collision_normal = Collision::get_collision_time_and_normal(a.shape, a.velocity, b.shape, b.velocity)
             if collision_time && collision_time <= time_left
@@ -79,10 +79,10 @@ module Nulu
                 # earliest collision update
                 earliest_collision_time = collision_time
                 earliest_collision_normal = collision_normal
-                earliest_collision_entity_a = a
-                earliest_collision_entity_b = b
-                earliest_collision_entity_id_a = id_a
-                earliest_collision_entity_id_b = id_b
+                earliest_collision_body_a = a
+                earliest_collision_body_b = b
+                earliest_collision_body_id_a = id_a
+                earliest_collision_body_id_b = id_b
               end
             end
           end
@@ -95,18 +95,18 @@ module Nulu
           elapsed_time = time_left
         end
 
-        @entity_pool.each do |id, entity|
-          entity.move(entity.velocity * elapsed_time)
+        @body_pool.each do |id, body|
+          body.move(body.velocity * elapsed_time)
         end
 
         # Collision Response
         if earliest_collision_time && earliest_collision_normal
 
           # Renaming
-          a = earliest_collision_entity_a
-          b = earliest_collision_entity_b
-          id_a = earliest_collision_entity_id_a
-          id_b = earliest_collision_entity_id_b
+          a = earliest_collision_body_a
+          b = earliest_collision_body_b
+          id_a = earliest_collision_body_id_a
+          id_b = earliest_collision_body_id_b
 
           # Save (for normal calculation)
           prev_a_velocity = a.velocity.clone()
@@ -142,10 +142,10 @@ module Nulu
       end
 
       # If there's still time left, screw it, we ignore collisions and just do it
-      @entity_pool.each do |id, entity|
-        entity.move(entity.velocity * time_left)
+      @body_pool.each do |id, body|
+        body.move(body.velocity * time_left)
       end
-      separate_entities()
+      separate_bodies()
 
     end
 
@@ -153,9 +153,9 @@ module Nulu
     private
 
     # TODO: Could be more robust
-    def separate_entities()
-      @entity_pool.each do |id_a, a|
-        @entity_pool.each do |id_b, b|
+    def separate_bodies()
+      @body_pool.each do |id_a, a|
+        @body_pool.each do |id_b, b|
           next if a == b
           if Nulu::Collision.colliding?(a.shape, b.shape)
             mtv = Nulu::Collision.mtv(a.shape, b.shape)
@@ -179,11 +179,11 @@ module Nulu
       end
     end
 
-    def add_and_return_controller_for(entity)
+    def add_and_return_restricted_body_for(free_body)
       @current_id += 1
       id = @current_id - 1
-      @entity_pool[id] = entity
-      return EntityController.new(self, entity, id)
+      @body_pool[id] = free_body
+      return Body.new(self, free_body, id)
     end
 
   end

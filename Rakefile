@@ -12,6 +12,6 @@ task :collision do
   ruby "./test/sandbox_collision.rb"
 end
 
-task :sandbox do
+task :world do
   ruby "./test/sandbox_world.rb"
 end
