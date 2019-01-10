@@ -1,5 +1,5 @@
 require "minitest/autorun"
-require_relative "../lib/nulu"
+require_relative "../src/nulu"
 
 class TestSegment < Minitest::Test
 

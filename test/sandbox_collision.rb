@@ -1,5 +1,5 @@
 require "gosu"
-require_relative "../lib/nulu"
+require_relative "../src/nulu"
 
 class Sandbox < Gosu::Window
   WIDTH, HEIGHT = 640, 480

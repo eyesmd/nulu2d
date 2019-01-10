@@ -1,5 +1,5 @@
 require "gosu"
-require_relative "../lib/nulu"
+require_relative "../src/nulu"
 require 'pry'
 
 class Sandbox < Gosu::Window
