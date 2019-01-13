@@ -31,6 +31,9 @@ module Corporeal
   def frictionless() @body.frictionless end
   def frictionless=(new_frictionless) @body.frictionless = new_frictionless end
 
+  def gravityless() @body.gravityless end
+  def gravityless=(new_gravityless) @body.gravityless = new_gravityless end
+
   def normal() @body.normal end
 
 end

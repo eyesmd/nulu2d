@@ -40,6 +40,9 @@ module Nulu
     def frictionless() @free_body.frictionless end
     def frictionless=(new_frictionless) @free_body.frictionless = new_frictionless end
 
+    def gravityless() @free_body.gravityless end
+    def gravityless=(new_gravityless) @free_body.gravityless = new_gravityless end
+
     def normal
       @world.get_body_normal(@id) || Nulu::Point.new(0, 0)
     end
