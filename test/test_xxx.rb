@@ -1,168 +1,163 @@
 require "minitest/autorun"
 require_relative "../src/nulu"
 
-class TestXXX < Minitest::Test
+class TestCollisionEnabler < Minitest::Test
 
-  def test_1
-    xxx = Nulu::XXX.new()
+  def test_groupless_objects_are_collidable_by_default
+    enabler = Nulu::CollisionEnabler.new()
 
     a, b, c = new_shapes(3)
 
-    xxx.add(a)
-    xxx.add(b)
-    xxx.add(c)
+    enabler.add(a)
+    enabler.add(b)
+    enabler.add(c)
 
-    assert_collidable_pairs_are(xxx, [[a, b], [a, c], [b, c]])
+    assert_collidable_pairs_are(enabler, [[a, b], [a, c], [b, c]])
   end
 
-  def test_2
-    xxx = Nulu::XXX.new()    
+  def test_groups_are_collidable_by_default
+    enabler = Nulu::CollisionEnabler.new()    
 
     a, b = new_shapes(2)
 
-    xxx.add(a, :character)
-    xxx.add(b, :character)
+    enabler.add(a, :character)
+    enabler.add(b, :character)
 
-    assert_collidable_pairs_are(xxx, [[a, b]])
+    assert_collidable_pairs_are(enabler, [[a, b]])
   end
 
-  def test_3
-    xxx = Nulu::XXX.new()    
+  def test_groups_can_be_marked_as_non_collidable
+    enabler = Nulu::CollisionEnabler.new()    
 
     a, b = new_shapes(2)
 
-    xxx.add(a, :character)
-    xxx.add(b, :character)
+    enabler.add(a, :character)
+    enabler.add(b, :character)
 
-    xxx.disable_collision_within(:character)
+    enabler.disable_collision_within(:character)
 
-    assert_collidable_pairs_are(xxx, [])
+    assert_collidable_pairs_are(enabler, [])
   end
 
 
-  def test_3b
-    xxx = Nulu::XXX.new()    
+  def test_groups_can_be_marked_as_collidable
+    enabler = Nulu::CollisionEnabler.new()    
 
     a, b = new_shapes(2)
 
-    xxx.add(a, :character)
-    xxx.add(b, :character)
+    enabler.add(a, :character)
+    enabler.add(b, :character)
 
-    xxx.disable_collision_within(:character)
-    xxx.enable_collision_within(:character)
+    enabler.disable_collision_within(:character)
+    enabler.enable_collision_within(:character)
 
-    assert_collidable_pairs_are(xxx, [[a, b]])
+    assert_collidable_pairs_are(enabler, [[a, b]])
   end
 
-  def test_3c
-    xxx = Nulu::XXX.new()    
+  def test_groups_can_be_marked_before_objects_are_added
+    enabler = Nulu::CollisionEnabler.new()    
 
-    xxx.disable_collision_within(:character)
+    enabler.disable_collision_within(:character)
 
     a, b = new_shapes(2)
 
-    xxx.add(a, :character)
-    xxx.add(b, :character)
+    enabler.add(a, :character)
+    enabler.add(b, :character)
 
-    assert_collidable_pairs_are(xxx, [])
+    assert_collidable_pairs_are(enabler, [])
   end
 
-  def test_4
-    xxx = Nulu::XXX.new()
+  def test_group_pairs_are_collidable_by_default
+    enabler = Nulu::CollisionEnabler.new()
 
     a, b = new_shapes(2)
-    xxx.add(a, :blue)
-    xxx.add(b, :red)
+    enabler.add(a, :blue)
+    enabler.add(b, :red)
 
-    assert_collidable_pairs_are(xxx, [[a, b]])
+    assert_collidable_pairs_are(enabler, [[a, b]])
   end
 
-  def test_5
-    xxx = Nulu::XXX.new()
+  def test_group_pairs_can_be_marked_as_non_collidable
+    enabler = Nulu::CollisionEnabler.new()
 
     a, b = new_shapes(2)
-    xxx.add(a, :blue)
-    xxx.add(b, :red)
+    enabler.add(a, :blue)
+    enabler.add(b, :red)
 
-    xxx.disable_collision_between(:red, :blue)
+    enabler.disable_collision_between(:red, :blue)
 
-    assert_collidable_pairs_are(xxx, [])
+    assert_collidable_pairs_are(enabler, [])
   end
 
-  def test_5b
-    xxx = Nulu::XXX.new()
+  def test_group_pairs_can_be_marked_as_collidable
+    enabler = Nulu::CollisionEnabler.new()
 
     a, b = new_shapes(2)
-    xxx.add(a, :blue)
-    xxx.add(b, :red)
+    enabler.add(a, :blue)
+    enabler.add(b, :red)
 
-    xxx.disable_collision_between(:red, :blue)
-    xxx.enable_collision_between(:red, :blue)
+    enabler.disable_collision_between(:red, :blue)
+    enabler.enable_collision_between(:red, :blue)
 
-    assert_collidable_pairs_are(xxx, [[a, b]])
+    assert_collidable_pairs_are(enabler, [[a, b]])
   end
 
-  def test_5c
-    xxx = Nulu::XXX.new()
+  def test_group_pairs_can_be_marked_before_objects_are_added
+    enabler = Nulu::CollisionEnabler.new()
 
-    xxx.disable_collision_between(:red, :blue)
+    enabler.disable_collision_between(:red, :blue)
 
     a, b = new_shapes(2)
-    xxx.add(a, :blue)
-    xxx.add(b, :red)
+    enabler.add(a, :blue)
+    enabler.add(b, :red)
 
-    assert_collidable_pairs_are(xxx, [])
+    assert_collidable_pairs_are(enabler, [])
   end
 
-  # multiple withins
-  def test_6
-    xxx = Nulu::XXX.new()
+  def test_groups_can_be_marked_as_non_collidable_with_multiple_groups
+    enabler = Nulu::CollisionEnabler.new()
 
     a, b, c, d = new_shapes(4)
-    xxx.add(a, :blue)
-    xxx.add(b, :blue)
-    xxx.add(c, :red)
-    xxx.add(d, :red)
+    enabler.add(a, :blue)
+    enabler.add(b, :blue)
+    enabler.add(c, :red)
+    enabler.add(d, :red)
 
-    xxx.disable_collision_within(:blue)
+    enabler.disable_collision_within(:blue)
 
-    assert_collidable_pairs_are(xxx, [[c,d], [a,c], [a,d], [b,c], [b,d]])
+    assert_collidable_pairs_are(enabler, [[c,d], [a,c], [a,d], [b,c], [b,d]])
   end
 
-  # multiple betweens
-  def test_7
-    xxx = Nulu::XXX.new()
+  def test_group_pairs_can_be_marked_as_non_collidable_with_multiple_pairs
+    enabler = Nulu::CollisionEnabler.new()
 
     a, b, c = new_shapes(3)
-    xxx.add(a, :a)
-    xxx.add(b, :b)
-    xxx.add(c, :c)
+    enabler.add(a, :a)
+    enabler.add(b, :b)
+    enabler.add(c, :c)
 
-    xxx.disable_collision_between(:a, :c)
+    enabler.disable_collision_between(:a, :c)
 
-    assert_collidable_pairs_are(xxx, [[b,a], [b,c]])
+    assert_collidable_pairs_are(enabler, [[b,a], [b,c]])
   end
 
-  def 
-
-  # big_test
-  def test_big
-    xxx = Nulu::XXX.new()
+  def test_complex
+    enabler = Nulu::CollisionEnabler.new()
 
     a, b, c, d, e, f, g, h = new_shapes(8)
-    xxx.add(a, :allies)
-    xxx.add(b, :enemies)
-    xxx.add(c, :enemies)
-    xxx.add(d, :stage)
-    xxx.add(e, :stage)
-    xxx.add(f, :stage)
-    xxx.add(g, :stage)
-    xxx.add(h, :objects)
+    enabler.add(a, :allies)
+    enabler.add(b, :enemies)
+    enabler.add(c, :enemies)
+    enabler.add(d, :stage)
+    enabler.add(e, :stage)
+    enabler.add(f, :stage)
+    enabler.add(g, :stage)
+    enabler.add(h, :objects)
 
-    xxx.disable_collision_within(:stage)
-    xxx.disable_collision_within(:objects)
-    xxx.disable_collision_between(:objects, :stage)
-    xxx.disable_collision_between(:objects, :enemies)
+    enabler.disable_collision_within(:stage)
+    enabler.disable_collision_within(:objects)
+    enabler.disable_collision_between(:objects, :stage)
+    enabler.disable_collision_between(:objects, :enemies)
 
     expected_collidable_pairs = []
     expected_collidable_pairs << [a, b] << [a, c] << [a, d] << [a, e] << [a, f] << [a, g] << [a, h] # ally with everyone
@@ -170,7 +165,7 @@ class TestXXX < Minitest::Test
     expected_collidable_pairs << [c, d] << [c, e] << [c, f] << [c, g] # enemy c with stage
     expected_collidable_pairs << [b, c] # enemies within themselves
 
-    assert_collidable_pairs_are(xxx, expected_collidable_pairs)
+    assert_collidable_pairs_are(enabler, expected_collidable_pairs)
   end
 
 
@@ -184,9 +179,9 @@ class TestXXX < Minitest::Test
     Array.new(count) { new_shape() }
   end
 
-  def assert_collidable_pairs_are(xxx, expected_pairs)
+  def assert_collidable_pairs_are(enabler, expected_pairs)
     actual_pairs = []
-    xxx.each_collidable_pair do |a, b|
+    enabler.each_collidable_pair do |a, b|
       actual_pairs << [a, b]
     end
 

@@ -1,6 +1,6 @@
 module Nulu
 
-  class XXX
+  class CollisionEnabler
 
     DEFAULT_GROUP_LIMIT = 100
 
