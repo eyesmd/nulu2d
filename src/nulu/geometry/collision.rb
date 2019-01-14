@@ -1,6 +1,7 @@
 module Nulu
 
   module Collision
+    
     def self.colliding?(a, b)
       self.mtv(a, b)
     end
