@@ -14,13 +14,14 @@ class Sandbox < Gosu::Window
     @active_keys = []
 
     @world = Nulu::World.new()
-    @mc = @world.make_body(Nulu::Rectangle.new(100, 100, Nulu::Point.new(WIDTH / 2.0 - 200, HEIGHT - 300)), 15)
+    @mc = @world.make_body(Nulu::Rectangle.new(100, 100, Nulu::Point.new(WIDTH / 2.0 - 200, HEIGHT - 300)), 15, 0.0)
     @floor = @world.make_static_body(Nulu::Rectangle.new(1500, 200, Nulu::Point.new(-WIDTH / 2.0, HEIGHT - 650)), 0.3)
+    @solid_box = @world.make_body(Nulu::Rectangle.new(100, 150, Nulu::Point.new(WIDTH / 2.0, HEIGHT - 300)), 15, 0.0, :box)
+    @pass_box = @world.make_body(Nulu::Rectangle.new(10, 250, Nulu::Point.new(WIDTH / 2.0 + 200, HEIGHT - 300)), 15, 0.0, :wall)
 
-    @objects = []
-    @objects << @mc
-    @objects << @floor
-    @objects << @world.make_body(Nulu::Rectangle.new(100, 150, Nulu::Point.new(WIDTH / 2.0, HEIGHT - 300)), 15)
+    @world.disable_collision_between(:box, :wall)
+
+    @objects = [@mc, @floor, @solid_box, @pass_box]
   end
 
   # LOOP

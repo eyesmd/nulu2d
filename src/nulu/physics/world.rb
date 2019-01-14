@@ -2,9 +2,9 @@ module Nulu
   class World
 
     # Known Simulation Issues
-    # - In complex scenarios (example: object falling in a slope with finite mass), 
+    # - In complex scenarios (example: object falling on object standing on the floor), 
     #   the iterations needed for a proper response provokes a significant slowdown
-    # - Not necesarily a problem, but multiple objects pushing one another get
+    # - Not necesarily a problem (it is), but multiple objects pushing one another get
     #   correctly resolved via iterating
     # - When objects push each other, they jitter: Friction is applied inmediatly
     #   upon object collision. In the current scheme of collision resolving, this
@@ -18,19 +18,37 @@ module Nulu
 
     def initialize()
       @body_pool = Hash.new()
+      @collision_enabler = CollisionEnabler.new()
       @normals = Hash.new()
       @current_id = 0
     end
 
-    def make_body(shape, mass, friction = 0.0)
+    def make_body(shape, mass, friction = 0.0, group = :nulu_world_default)
       free_body = FreeBody.new(shape, mass, friction)
-      return add_and_return_restricted_body_for(free_body)
+      return add_and_return_restricted_body_for(free_body, group)
     end
 
-    def make_static_body(shape, friction = 0.0)
+    def make_static_body(shape, friction = 0.0, group = :nulu_world_default)
       free_body = FreeBody.new(shape, INF, friction)
       free_body.gravityless = true
-      return add_and_return_restricted_body_for(free_body)
+      return add_and_return_restricted_body_for(free_body, group)
+    end
+
+
+    def disable_collision_within(group)
+      @collision_enabler.disable_collision_within(group)
+    end
+
+    def disable_collision_between(group_a, group_b)
+      @collision_enabler.disable_collision_between(group_a, group_b)
+    end
+
+    def enable_collision_within(group)
+      @collision_enabler.enable_collision_within(group)
+    end
+
+    def enable_collision_between(group_a, group_b)
+      @collision_enabler.enable_collision_between(group_a, group_b)
     end
 
 
@@ -69,21 +87,18 @@ module Nulu
         earliest_collision_body_id_a = nil
         earliest_collision_body_id_b = nil
 
-        @body_pool.each do |id_a, a|
-          @body_pool.each do |id_b, b|
-            next if a == b
-            collision_time, collision_normal = Collision::get_collision_time_and_normal(a.shape, a.velocity, b.shape, b.velocity)
-            if collision_time && collision_time <= time_left
-              # there will be collision
-              if !earliest_collision_time || collision_time <= earliest_collision_time
-                # earliest collision update
-                earliest_collision_time = collision_time
-                earliest_collision_normal = collision_normal
-                earliest_collision_body_a = a
-                earliest_collision_body_b = b
-                earliest_collision_body_id_a = id_a
-                earliest_collision_body_id_b = id_b
-              end
+        each_collidable_bodies do |id_a, a, id_b, b|
+          collision_time, collision_normal = Collision::get_collision_time_and_normal(a.shape, a.velocity, b.shape, b.velocity)
+          if collision_time && collision_time <= time_left
+            # there will be collision
+            if !earliest_collision_time || collision_time <= earliest_collision_time
+              # earliest collision update
+              earliest_collision_time = collision_time
+              earliest_collision_normal = collision_normal
+              earliest_collision_body_a = a
+              earliest_collision_body_b = b
+              earliest_collision_body_id_a = id_a
+              earliest_collision_body_id_b = id_b
             end
           end
         end
@@ -154,16 +169,25 @@ module Nulu
 
     # TODO: Could be more robust
     def separate_bodies()
-      @body_pool.each do |id_a, a|
-        @body_pool.each do |id_b, b|
-          next if a == b
-          if Nulu::Collision.colliding?(a.shape, b.shape)
-            mtv = Nulu::Collision.mtv(a.shape, b.shape)
-            a_mass_ratio = get_ratio(a.mass, b.mass)
-            b.move(mtv * a_mass_ratio)
-            a.move(-mtv * (1.0 - a_mass_ratio))
-          end
+      each_collidable_bodies do |id_a, a, id_b, b|
+        if Nulu::Collision.colliding?(a.shape, b.shape)
+          mtv = Nulu::Collision.mtv(a.shape, b.shape)
+          a_mass_ratio = get_ratio(a.mass, b.mass)
+          b.move(mtv * a_mass_ratio)
+          a.move(-mtv * (1.0 - a_mass_ratio))
         end
+      end
+    end
+
+    def each_collidable_bodies()
+      # @body_pool.each do |id_a, a|
+      #   @body_pool.each do |id_b, b|
+      #     next if a == b
+      #     yield(id_a, a, id_b, b)
+      #   end
+      # end
+      @collision_enabler.each_collidable_pair do |pa, pb|
+        yield(pa[0], pa[1], pb[0], pb[1])
       end
     end
 
@@ -179,10 +203,11 @@ module Nulu
       end
     end
 
-    def add_and_return_restricted_body_for(free_body)
+    def add_and_return_restricted_body_for(free_body, group)
+      id = @current_id
       @current_id += 1
-      id = @current_id - 1
       @body_pool[id] = free_body
+      @collision_enabler.add([id, free_body], group) # TODO: Raise domain specific error on limit reached
       return Body.new(self, free_body, id)
     end
 
