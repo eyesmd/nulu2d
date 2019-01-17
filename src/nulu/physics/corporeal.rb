@@ -2,6 +2,9 @@ module Nulu
 
   module Corporeal
 
+    def id() @body.id() end
+    def world() @body.world end
+
     def width() @body.width() end  
     def height() @body.height() end
     def center() @body.center() end

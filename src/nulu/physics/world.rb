@@ -1,3 +1,5 @@
+require 'set'
+
 module Nulu
   class World
 
@@ -17,9 +19,10 @@ module Nulu
     COLLISION_LOOP_TRIES = 100
 
     def initialize()
-      @body_pool = Hash.new()
+      @body_pool = {}
       @collision_enabler = CollisionEnabler.new()
-      @normals = Hash.new()
+      @normals = {}
+      @collision_skip = Set.new()
       @current_id = 0
     end
 
@@ -49,6 +52,21 @@ module Nulu
 
     def enable_collision_between(group_a, group_b)
       @collision_enabler.enable_collision_between(group_a, group_b)
+    end
+
+    class SortedPair
+      attr_reader :min, :max
+      def initialize(a, b) @min, @max = [a,b].min, [a,b].max end
+      def eql?(other) min.eql?(other.min) && max.eql?(other.max) end
+      def hash() [min, max].hash end
+    end
+
+    def disable_collision_between_bodies(a, b)
+      @collision_skip.add(SortedPair.new(a.id,b.id))
+    end
+
+    def renable_collision_between_bodies(a, b)
+      @collision_skip.delete(SortedPair.new(a.id,b.id))
     end
 
 
@@ -180,14 +198,10 @@ module Nulu
     end
 
     def each_collidable_bodies()
-      # @body_pool.each do |id_a, a|
-      #   @body_pool.each do |id_b, b|
-      #     next if a == b
-      #     yield(id_a, a, id_b, b)
-      #   end
-      # end
       @collision_enabler.each_collidable_pair do |pa, pb|
-        yield(pa[0], pa[1], pb[0], pb[1])
+        if !@collision_skip.include?(SortedPair.new(pa[0], pb[0]))
+          yield(pa[0], pa[1], pb[0], pb[1])
+        end
       end
     end
 

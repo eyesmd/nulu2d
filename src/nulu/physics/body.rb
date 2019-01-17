@@ -2,6 +2,8 @@ module Nulu
 
   class Body
 
+    attr_reader :id, :world
+
     def initialize(world, free_body, id)
       @world = world
       @free_body = free_body
