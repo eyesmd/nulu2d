@@ -31,8 +31,12 @@ module Nulu
         end
 
         if minb <= maxa # overlapped
-          if projected_rel_velocity_a >= 1e-6 # will stop colliding at some point
-            latter_time = (maxb - mina) / projected_rel_velocity_a
+          if projected_rel_velocity_a.abs >= 1e-6 # will stop colliding at some point
+            if projected_rel_velocity_a >= 0
+              latter_time = (maxb - mina) / projected_rel_velocity_a
+            else 
+              latter_time = (maxa - minb) / (-projected_rel_velocity_a)
+            end
             min_latter_time = [min_latter_time, latter_time].min
           end
         else # separated

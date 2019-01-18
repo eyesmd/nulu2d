@@ -4,7 +4,7 @@ require 'pry'
 
 class TestPhysics < Minitest::Test
 
-  def test_colliding_up
+  def test_get_collision_time_and_normal_colliding_vertically
     p = Nulu::Polygon.new(Nulu::Point.new(0, 0),
                           Nulu::Point.new(0, 4),
                           Nulu::Point.new(4, 4),
@@ -19,7 +19,7 @@ class TestPhysics < Minitest::Test
     assert_equal nil, collision_normal
   end
 
-  def test_zzz_colliding_right
+  def test_get_collision_time_and_normal_colliding_horizontally
     p = Nulu::Polygon.new(Nulu::Point.new(0, 0),
                           Nulu::Point.new(0, 4),
                           Nulu::Point.new(4, 4),
@@ -34,7 +34,7 @@ class TestPhysics < Minitest::Test
     assert_equal nil, collision_normal
   end
 
-  def test_zzz_colliding_right_up
+  def test_get_collision_time_and_normal_colliding_diagonally
     p = Nulu::Polygon.new(Nulu::Point.new(1, 0),
                           Nulu::Point.new(0, 1),
                           Nulu::Point.new(-1, 0),
@@ -48,8 +48,7 @@ class TestPhysics < Minitest::Test
     assert_equal nil, collision_normal
   end
 
-
-  def test_zzz_colliding_reverse
+  def test_get_collision_time_and_normal_colliding_reverse_diagonally
     p = Nulu::Polygon.new(Nulu::Point.new(1, 0),
                           Nulu::Point.new(0, 1),
                           Nulu::Point.new(-1, 0),
@@ -64,7 +63,7 @@ class TestPhysics < Minitest::Test
   end
 
 
-  def test_get_collision_time_horizontal
+  def test_get_collision_time_and_normal_horizontal
     #   o
     #   oo
     #xxxooo
@@ -83,12 +82,12 @@ class TestPhysics < Minitest::Test
     assert_equal nil, collision_time
     assert_equal nil, collision_normal
 
-    # future collision
+    # eventual collision
     collision_time, collision_normal = Nulu::Collision::get_collision_time_and_normal(p, Nulu::Vector.new(2, 0), q, Nulu::Vector.new(0, 0))
     assert_equal 0.5, collision_time
     assert_equal Nulu::Point.new(1, 0), collision_normal
 
-    # future collision - with y speed
+    # eventual collision, with non-zero y speed
     collision_time, collision_normal = Nulu::Collision::get_collision_time_and_normal(p, Nulu::Vector.new(2, 1), q, Nulu::Vector.new(0, 0))
     assert_equal 0.5, collision_time
     assert_equal Nulu::Point.new(1, 0), collision_normal
@@ -103,33 +102,33 @@ class TestPhysics < Minitest::Test
     assert_equal 0.5, collision_time
     assert_equal Nulu::Point.new(1, 0), collision_normal
 
-    # one body 2 fast
+    # one body tailing the other, but the other is too fast
     collision_time, collision_normal = Nulu::Collision::get_collision_time_and_normal(p, Nulu::Vector.new(4, 1), q, Nulu::Vector.new(5, 0))
     assert_equal nil, collision_time
     assert_equal nil, collision_normal
 
-    # one body tailing the other really slowly
+    # one body slowly tailing the other, and eventually colliding
     collision_time, collision_normal = Nulu::Collision::get_collision_time_and_normal(p, Nulu::Vector.new(2.1, 0), q, Nulu::Vector.new(2, 0))
     assert_in_delta 9.999, collision_time
     assert_equal Nulu::Point.new(1, 0), collision_normal
 
-    # one body tailing the other really slowly, but missing through y axis
+    # one body slowly tailing the other, but missing through y axis
     collision_time, collision_normal = Nulu::Collision::get_collision_time_and_normal(p, Nulu::Vector.new(2.1, 1), q, Nulu::Vector.new(2, 0))
     assert_equal nil, collision_time
     assert_equal nil, collision_normal
 
-    # future-collision by other body approaching
+    # eventual collision by other body approaching
     collision_time, collision_normal = Nulu::Collision::get_collision_time_and_normal(p, Nulu::Vector.new(0, 0), q, Nulu::Vector.new(-2, -1))
     assert_equal 0.5, collision_time
     assert_equal Nulu::Point.new(1, 0), collision_normal
 
-    # future-collision by other body tailing the first one
+    # eventual collision by other body tailing the first one
     collision_time, collision_normal = Nulu::Collision::get_collision_time_and_normal(p, Nulu::Vector.new(-2, 0), q, Nulu::Vector.new(-2.5, 0))
     assert_equal 2.0, collision_time
     assert_equal Nulu::Point.new(1, 0), collision_normal
   end
 
-  def test_get_collision_time_vertical
+  def test_get_collision_time_and_normal_vertical
     #ooooooo  
     #ooooooo
     #  
@@ -145,10 +144,10 @@ class TestPhysics < Minitest::Test
                           Nulu::Point.new(6, 5),
                           Nulu::Point.new(0, 5))
 
-    # static
+    # both bodies static, not colliding
     assert_equal nil, Nulu::Collision::get_collision_time_and_normal(p, Nulu::Vector.new(0.0, 0.0), q, Nulu::Vector.new(0.0, 0.0))
 
-    # no collision with horizontal motion
+    # no collision (but with one body moving horizontally)
     assert_equal nil, Nulu::Collision::get_collision_time_and_normal(p, Nulu::Vector.new(0.0, 0.0), q, Nulu::Vector.new(-1.0, 0.0))
 
     # vertical collision
@@ -156,21 +155,21 @@ class TestPhysics < Minitest::Test
     assert_equal 2.0, collision_time
     assert_equal Nulu::Point.new(0, 1), collision_normal
 
-    # vertical collision with little horizontal motion
+    # vertical collision with a little horizontal motion
     collision_time, collision_normal = Nulu::Collision::get_collision_time_and_normal(p, Nulu::Vector.new(0.0, 1.0), q, Nulu::Vector.new(1.0, 0))
     assert_equal 2.0, collision_time
     assert_equal Nulu::Point.new(0, 1), collision_normal
 
-    # miss with lots of horizontal motion
+    # missing collision with both shapes moving horizontally
     assert_equal nil, Nulu::Collision::get_collision_time_and_normal(p, Nulu::Vector.new(0.0, 1.0), q, Nulu::Vector.new(10.0, 0))
 
-    # diagonal catch-up with lots of horizontal motion
+    # colliding diagonally with both shapes moving horizontally
     collision_time, collision_normal = Nulu::Collision::get_collision_time_and_normal(p, Nulu::Vector.new(10.0, 1.0), q, Nulu::Vector.new(10.0, 0.5))
     assert_equal 4.0, collision_time
     assert_equal Nulu::Point.new(0, 1), collision_normal
   end
  
-  def test_get_collision_time_non_squares
+  def test_get_collision_time_and_normal_non_squares
     #    o
     #   ooo
     # x  o
@@ -203,6 +202,7 @@ class TestPhysics < Minitest::Test
   end
 
   def test_border_collision
+    # The edges of these test polygons are touching
     p = Nulu::Polygon.new(Nulu::Point.new(0, 0),
                          Nulu::Point.new(0, 1),
                           Nulu::Point.new(1, 1),
@@ -216,6 +216,29 @@ class TestPhysics < Minitest::Test
 
     collision_time, collision_normal = Nulu::Collision::get_collision_time_and_normal(p, p_velocity, q, q_velocity)
     assert_equal 0, collision_time
+    assert_equal nil, collision_normal
+  end
+
+  def test_corner_case_on_avoiding_collision
+    # This is a reactive test against a specific bug.
+    # It handles the corner case in an axis where the first shape is initially colliding,
+    # and then stops colliding though relative velocity on the *negative side*.
+    p = Nulu::Polygon.new(
+      Nulu::Point.new(729.0, 249.0),
+      Nulu::Point.new(799.0, 249.0),
+      Nulu::Point.new(799.0, 351.0),
+      Nulu::Point.new(729.0, 351.0))
+    p_velocity = Nulu::Point.new(1.0, 2.0)
+
+    q = Nulu::Polygon.new(
+      Nulu::Point.new(800.0, 220.0),
+      Nulu::Point.new(800.0, 250.0),
+      Nulu::Point.new(1000.0, 250.0),
+      Nulu::Point.new(1000.0, 220.0))
+    q_velocity = Nulu::Point.new(0, 0)
+
+    collision_time, collision_normal = Nulu::Collision::get_collision_time_and_normal(p, p_velocity, q, q_velocity)
+    assert_equal nil, collision_time
     assert_equal nil, collision_normal
   end
 
