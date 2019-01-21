@@ -31,15 +31,23 @@ module Nulu
       @normals = {}
     end
 
-    def make_body(shape, mass, friction = 0.0, group = :nulu_world_default)
-      free_body = FreeBody.new(shape, mass, friction)
-      return add_and_return_restricted_body_for(free_body, group)
+    def add_body(body, collision_group)
+      id = @current_id
+      @current_id += 1
+      @body_pool[id] = body
+      @collision_enabler.add([id, body], collision_group) # TODO: Raise domain specific error on limit reached
+      return id
     end
 
-    def make_static_body(shape, friction = 0.0, group = :nulu_world_default)
-      free_body = FreeBody.new(shape, INF, friction)
-      free_body.gravityless = true
-      return add_and_return_restricted_body_for(free_body, group)
+
+    def make_body(shape, mass, friction = 0.0, collision_group = :nulu_world_default)
+      return Body.new(self, shape, mass, friction, collision_group)
+    end
+
+    def make_static_body(shape, friction = 0.0, collision_group = :nulu_world_default)
+      body = Body.new(self, shape, INF, friction, collision_group)
+      body.gravityless = true
+      return body
     end
 
 
@@ -74,7 +82,7 @@ module Nulu
 
 
     def update(delta)
-      
+
       # Gravity
       @body_pool.each do |id, body|
         next if body.gravityless
@@ -214,14 +222,6 @@ module Nulu
       def initialize(a, b) @min, @max = [a,b].min, [a,b].max end
       def eql?(other) min.eql?(other.min) && max.eql?(other.max) end
       def hash() [min, max].hash end
-    end
-
-    def add_and_return_restricted_body_for(free_body, group)
-      id = @current_id
-      @current_id += 1
-      @body_pool[id] = free_body
-      @collision_enabler.add([id, free_body], group) # TODO: Raise domain specific error on limit reached
-      return Body.new(self, free_body, id)
     end
 
   end

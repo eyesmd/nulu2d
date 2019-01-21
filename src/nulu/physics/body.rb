@@ -2,48 +2,44 @@ module Nulu
 
   class Body
 
-    attr_reader :id, :world
+    attr_reader   :world, :collision_group, :id
+    attr_reader   :shape
+    attr_accessor :velocity
+    attr_accessor :mass, :friction
+    attr_accessor :frictionless, :gravityless
 
-    def initialize(world, free_body, id)
+    def initialize(world, shape, mass, friction = 0.0, collision_group = :nulu_body_default)
       @world = world
-      @free_body = free_body
-      @id = id
+      @collision_group = collision_group
+      @id = world.add_body(self, collision_group)
+
+      @shape = shape
+      @mass = Float(mass)
+      @friction = Float(friction)
+      @velocity = Nulu::Vector.new(0, 0)
+      @frictionless = false
+      @gravityless = false
     end
 
-    # TODO: Look into 'Forwardable?'
-    def width() @free_body.width() end  
-    def height() @free_body.height() end
-    def center() @free_body.center() end
-    def left() @free_body.left() end
-    def right() @free_body.right() end
-    def top() @free_body.top() end
-    def bottom() @free_body.bottom() end
-    def center=(new_center) @free_body.center = new_center end
-    def left=(new_left) @free_body.left = new_left end
-    def right=(new_right) @free_body.right = new_right end
-    def top=(new_top) @free_body.top = new_top end
-    def bottom=(new_bottom) @free_body.bottom = new_bottom end
-    def move(offset) @free_body.move(offset) end
-    def move_x(offset_x) @free_body.move_x(offset_x) end
-    def move_y(offset_y) @free_body.move_y(offset_y) end
+    def width() @shape.width() end  
+    def height() @shape.height() end
+    def center() @shape.center() end
+    def left() @shape.left() end
+    def right() @shape.right() end
+    def top() @shape.top() end
+    def bottom() @shape.bottom() end
+    def center=(new_center) @shape.center = new_center end
+    def left=(new_left) @shape.left = new_left end
+    def right=(new_right) @shape.right = new_right end
+    def top=(new_top) @shape.top = new_top end
+    def bottom=(new_bottom) @shape.bottom = new_bottom end
+    def move(offset) @shape.move(offset) end
+    def move_x(offset_x) @shape.move_x(offset_x) end
+    def move_y(offset_y) @shape.move_y(offset_y) end
 
-    def shape() @free_body.shape end
-    def shape=(new_shape) @free_body.shape = new_shape end
-
-    def velocity() @free_body.velocity end
-    def velocity=(new_velocity) @free_body.velocity = new_velocity end
-
-    def mass() @free_body.mass end
-    def mass=(new_mass) @free_body.mass = new_mass end
-
-    def friction() @free_body.friction end
-    def friction=(new_friction) @free_body.friction = new_friction end
-
-    def frictionless() @free_body.frictionless end
-    def frictionless=(new_frictionless) @free_body.frictionless = new_frictionless end
-
-    def gravityless() @free_body.gravityless end
-    def gravityless=(new_gravityless) @free_body.gravityless = new_gravityless end
+    def apply_velocity(delta)
+      @shape.move(@velocity * delta)
+    end
 
     def normal
       @world.get_body_normal(@id) || Nulu::Point.new(0, 0)
