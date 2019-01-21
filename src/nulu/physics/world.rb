@@ -4,26 +4,31 @@ module Nulu
   class World
 
     # Known Simulation Issues
-    # - In complex scenarios (example: object falling on object standing on the floor), 
-    #   the iterations needed for a proper response provokes a significant slowdown
-    # - Not necesarily a problem (it is), but multiple objects pushing one another get
-    #   correctly resolved via iterating
+    # - In scenarios involving collision of more than 2 objects at a time, (example:
+    #   object falling on object standing on the floor), the iterations needed for a
+    #   proper response provokes a significant slowdown.
+    # - Not necesarily a problem, but multiple objects pushing one another get
+    #   correctly resolved iteratively, not exactly
     # - When objects push each other, they jitter: Friction is applied inmediatly
     #   upon object collision. In the current scheme of collision resolving, this
     #   makes for 'non-deterministic' behaviour: the overall result depends on which
     #   collisions are solved first (example: upon A and B colliding: A colliding
     #   with floor, then A and B colliding, then B colliding with floor; results
     #   in A and B colliding, but having different velocities).
+    # - The logic separating objects from overlapping is not very robust, so if
+    #   objects squish one another against, say, a wall, they'll begin to overlap.
+    #   This may break the engine if the velocities are high enough, and the walls
+    #   thin enough.
     ##
 
     COLLISION_LOOP_TRIES = 100
 
     def initialize()
       @body_pool = {}
-      @collision_enabler = CollisionEnabler.new()
-      @normals = {}
-      @collision_skip = Set.new()
       @current_id = 0
+      @collision_enabler = CollisionEnabler.new()
+      @collision_skip = Set.new()
+      @normals = {}
     end
 
     def make_body(shape, mass, friction = 0.0, group = :nulu_world_default)
@@ -54,13 +59,6 @@ module Nulu
       @collision_enabler.enable_collision_between(group_a, group_b)
     end
 
-    class SortedPair
-      attr_reader :min, :max
-      def initialize(a, b) @min, @max = [a,b].min, [a,b].max end
-      def eql?(other) min.eql?(other.min) && max.eql?(other.max) end
-      def hash() [min, max].hash end
-    end
-
     def disable_collision_between_bodies(a, b)
       @collision_skip.add(SortedPair.new(a.id,b.id))
     end
@@ -76,6 +74,7 @@ module Nulu
 
 
     def update(delta)
+      
       # Gravity
       @body_pool.each do |id, body|
         next if body.gravityless
@@ -141,10 +140,6 @@ module Nulu
           id_a = earliest_collision_body_id_a
           id_b = earliest_collision_body_id_b
 
-          # Save (for normal calculation)
-          prev_a_velocity = a.velocity.clone()
-          prev_b_velocity = b.velocity.clone()
-
           # Decomposition
           a_velocity_into_plane, a_velocity_along_plane = a.velocity.decompose_into(earliest_collision_normal)
           b_velocity_into_plane, b_velocity_along_plane = b.velocity.decompose_into(earliest_collision_normal)
@@ -154,19 +149,17 @@ module Nulu
           new_velocity_into_plane = a_velocity_into_plane * a_mass_ratio + b_velocity_into_plane * (1.0 - a_mass_ratio)
 
           # Velocity along plane (friction)
-          if a.frictionless || b.frictionless
-            velocity_keep = 1.0
-          else 
-            velocity_keep = (1.0 - a.friction) * (1.0 - b.friction)
-          end
+          velocity_keep = a.frictionless || b.frictionless ? 1.0 : (1.0 - a.friction) * (1.0 - b.friction)
+          a_new_velocity_along_plane = a_velocity_along_plane * velocity_keep
+          b_new_velocity_along_plane = b_velocity_along_plane * velocity_keep
 
           # Apply velocity
-          a.velocity = a_velocity_along_plane * velocity_keep + new_velocity_into_plane
-          b.velocity = b_velocity_along_plane * velocity_keep + new_velocity_into_plane
+          a.velocity = a_new_velocity_along_plane + new_velocity_into_plane
+          b.velocity = b_new_velocity_along_plane + new_velocity_into_plane
 
           # Normal calculation
-          @normals[id_a] += a.velocity - prev_a_velocity
-          @normals[id_b] += b.velocity - prev_b_velocity
+          @normals[id_a] += new_velocity_into_plane - a_velocity_into_plane
+          @normals[id_b] += new_velocity_into_plane - b_velocity_into_plane
         end
 
         # Advance cycle
@@ -174,7 +167,7 @@ module Nulu
         tries-= 1
       end
 
-      # If there's still time left, screw it, we ignore collisions and just do it
+      # If there's still time left, we ignore collisions and just attempt to finish the update
       @body_pool.each do |id, body|
         body.move(body.velocity * time_left)
       end
@@ -185,7 +178,6 @@ module Nulu
 
     private
 
-    # TODO: Could be more robust
     def separate_bodies()
       each_collidable_bodies do |id_a, a, id_b, b|
         if Nulu::Collision.colliding?(a.shape, b.shape)
@@ -215,6 +207,13 @@ module Nulu
       else 
         return a / (a + b)
       end
+    end
+
+    class SortedPair
+      attr_reader :min, :max
+      def initialize(a, b) @min, @max = [a,b].min, [a,b].max end
+      def eql?(other) min.eql?(other.min) && max.eql?(other.max) end
+      def hash() [min, max].hash end
     end
 
     def add_and_return_restricted_body_for(free_body, group)
