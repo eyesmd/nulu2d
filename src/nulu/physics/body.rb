@@ -4,9 +4,9 @@ module Nulu
 
     attr_reader   :world, :collision_group, :id
     attr_reader   :shape
-    attr_accessor :velocity
-    attr_accessor :mass, :friction
+    attr_accessor :velocity, :mass, :friction
     attr_accessor :frictionless, :gravityless
+    attr_accessor :normal
 
     def initialize(world, shape, mass, friction = 0.0, collision_group = :nulu_body_default)
       @world = world
@@ -19,6 +19,8 @@ module Nulu
       @velocity = Nulu::Vector.new(0, 0)
       @frictionless = false
       @gravityless = false
+
+      @normal = Nulu::Vector.new(0, 0)
     end
 
     def width() @shape.width() end  
@@ -36,14 +38,6 @@ module Nulu
     def move(offset) @shape.move(offset) end
     def move_x(offset_x) @shape.move_x(offset_x) end
     def move_y(offset_y) @shape.move_y(offset_y) end
-
-    def apply_velocity(delta)
-      @shape.move(@velocity * delta)
-    end
-
-    def normal
-      @world.get_body_normal(@id) || Nulu::Point.new(0, 0)
-    end
 
   end
 end

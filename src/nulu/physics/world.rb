@@ -24,18 +24,17 @@ module Nulu
     COLLISION_LOOP_TRIES = 100
 
     def initialize()
-      @body_pool = {}
+      @bodies = []
       @current_id = 0
       @collision_enabler = CollisionEnabler.new()
       @collision_skip = Set.new()
-      @normals = {}
     end
 
     def add_body(body, collision_group)
       id = @current_id
       @current_id += 1
-      @body_pool[id] = body
-      @collision_enabler.add([id, body], collision_group) # TODO: Raise domain specific error on limit reached
+      @bodies << body
+      @collision_enabler.add(body, collision_group) # TODO: Raise domain specific error on limit reached
       return id
     end
 
@@ -68,31 +67,21 @@ module Nulu
     end
 
     def disable_collision_between_bodies(a, b)
-      @collision_skip.add(SortedPair.new(a.id,b.id))
+      @collision_skip.add(SortedPair.new(a.id, b.id))
     end
 
     def renable_collision_between_bodies(a, b)
-      @collision_skip.delete(SortedPair.new(a.id,b.id))
-    end
-
-
-    def get_body_normal(id)
-      return @normals[id]
+      @collision_skip.delete(SortedPair.new(a.id, b.id))
     end
 
 
     def update(delta)
 
-      # Gravity
-      @body_pool.each do |id, body|
-        next if body.gravityless
-        body.velocity.y -= 4
-      end
-
-      # Initialize normals
-      @normals.clear()
-      @body_pool.each do |id, body|
-        @normals[id] = Nulu::Vector.new(0, 0)
+      @bodies.each do |body|
+        # Gravity
+        body.velocity.y -= 4 unless body.gravityless
+        # Normal initialization
+        body.normal.zero()
       end
 
       # Main loop
@@ -109,10 +98,8 @@ module Nulu
         earliest_collision_normal = nil
         earliest_collision_body_a = nil
         earliest_collision_body_b = nil
-        earliest_collision_body_id_a = nil
-        earliest_collision_body_id_b = nil
 
-        each_collidable_bodies do |id_a, a, id_b, b|
+        each_collidable_bodies do |a, b|
           collision_time, collision_normal = Collision::get_collision_time_and_normal(a.shape, a.velocity, b.shape, b.velocity)
           if collision_time && collision_time <= time_left
             # there will be collision
@@ -122,8 +109,6 @@ module Nulu
               earliest_collision_normal = collision_normal
               earliest_collision_body_a = a
               earliest_collision_body_b = b
-              earliest_collision_body_id_a = id_a
-              earliest_collision_body_id_b = id_b
             end
           end
         end
@@ -135,7 +120,7 @@ module Nulu
           elapsed_time = time_left
         end
 
-        @body_pool.each do |id, body|
+        @bodies.each do |body|
           body.move(body.velocity * elapsed_time)
         end
 
@@ -145,8 +130,6 @@ module Nulu
           # Renaming
           a = earliest_collision_body_a
           b = earliest_collision_body_b
-          id_a = earliest_collision_body_id_a
-          id_b = earliest_collision_body_id_b
 
           # Decomposition
           a_velocity_into_plane, a_velocity_along_plane = a.velocity.decompose_into(earliest_collision_normal)
@@ -166,8 +149,8 @@ module Nulu
           b.velocity = b_new_velocity_along_plane + new_velocity_into_plane
 
           # Normal calculation
-          @normals[id_a] += new_velocity_into_plane - a_velocity_into_plane
-          @normals[id_b] += new_velocity_into_plane - b_velocity_into_plane
+          a.normal += new_velocity_into_plane - a_velocity_into_plane
+          b.normal += new_velocity_into_plane - b_velocity_into_plane
         end
 
         # Advance cycle
@@ -176,7 +159,7 @@ module Nulu
       end
 
       # If there's still time left, we ignore collisions and just attempt to finish the update
-      @body_pool.each do |id, body|
+      @bodies.each do |body|
         body.move(body.velocity * time_left)
       end
       separate_bodies()
@@ -187,7 +170,7 @@ module Nulu
     private
 
     def separate_bodies()
-      each_collidable_bodies do |id_a, a, id_b, b|
+      each_collidable_bodies do |a, b|
         if Nulu::Collision.colliding?(a.shape, b.shape)
           mtv = Nulu::Collision.mtv(a.shape, b.shape)
           a_mass_ratio = get_ratio(a.mass, b.mass)
@@ -198,9 +181,9 @@ module Nulu
     end
 
     def each_collidable_bodies()
-      @collision_enabler.each_collidable_pair do |pa, pb|
-        if !@collision_skip.include?(SortedPair.new(pa[0], pb[0]))
-          yield(pa[0], pa[1], pb[0], pb[1])
+      @collision_enabler.each_collidable_pair do |a, b|
+        if !@collision_skip.include?(SortedPair.new(a.id, b.id))
+          yield(a, b)
         end
       end
     end

@@ -118,6 +118,11 @@ module Nulu
       return [parallel_decomposition, self - parallel_decomposition]
     end
 
+    def zero
+      @x = 0
+      @y = 0      
+    end
+
     
     ## Comparisons
     def ==(p)
