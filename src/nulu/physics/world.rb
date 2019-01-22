@@ -81,7 +81,7 @@ module Nulu
         # Gravity
         body.velocity.y -= 4 unless body.gravityless
         # Normal initialization
-        body.normal.zero()
+        body.normals.clear()
       end
 
       # Main loop
@@ -149,8 +149,8 @@ module Nulu
           b.velocity = b_new_velocity_along_plane + new_velocity_into_plane
 
           # Normal calculation
-          a.normal += new_velocity_into_plane - a_velocity_into_plane
-          b.normal += new_velocity_into_plane - b_velocity_into_plane
+          a.normals << new_velocity_into_plane - a_velocity_into_plane
+          b.normals << new_velocity_into_plane - b_velocity_into_plane
         end
 
         # Advance cycle

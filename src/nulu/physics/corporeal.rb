@@ -39,7 +39,7 @@ module Nulu
     def gravityless() @body.gravityless end
     def gravityless=(new_gravityless) @body.gravityless = new_gravityless end
 
-    def normal() @body.normal end
+    def normals() @body.normals end
 
   end
   

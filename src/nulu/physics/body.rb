@@ -6,7 +6,7 @@ module Nulu
     attr_reader   :shape
     attr_accessor :velocity, :mass, :friction
     attr_accessor :frictionless, :gravityless
-    attr_accessor :normal
+    attr_accessor :normals
 
     def initialize(world, shape, mass, friction = 0.0, collision_group = :nulu_body_default)
       @world = world
@@ -20,7 +20,7 @@ module Nulu
       @frictionless = false
       @gravityless = false
 
-      @normal = Nulu::Vector.new(0, 0)
+      @normals = []
     end
 
     def width() @shape.width() end  
