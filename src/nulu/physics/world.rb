@@ -77,6 +77,9 @@ module Nulu
 
     def update(delta)
 
+      # Defensive Separation
+      separate_bodies()
+
       @bodies.each do |body|
         # Gravity
         body.velocity.y -= 4 unless body.gravityless
@@ -89,9 +92,6 @@ module Nulu
       time_left = delta
 
       while time_left >= 1e-3 && tries >= 0
-
-        # Defensive separation
-        separate_bodies()
 
         # Find earliest collision
         earliest_collision_time = nil
@@ -115,7 +115,11 @@ module Nulu
 
         # Goto earliest collision
         if earliest_collision_time
-          elapsed_time = earliest_collision_time * 0.999
+          if earliest_collision_time <= 1e-10
+            elapsed_time = 0.0
+          else 
+            elapsed_time = earliest_collision_time - 1e-10
+          end
         else 
           elapsed_time = time_left
         end

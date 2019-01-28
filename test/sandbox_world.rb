@@ -82,7 +82,9 @@ class Sandbox < Gosu::Window
       @objects.each do |body|
         draw_polygon(body.shape, Gosu::Color::WHITE)
         draw_segment(Nulu::Segment.new(body.center, body.center + body.velocity), Gosu::Color::FUCHSIA)
-        draw_segment(Nulu::Segment.new(body.center, body.center + body.normal), Gosu::Color::YELLOW)
+        body.normals.each do |normal|
+          draw_segment(Nulu::Segment.new(body.center, body.center + normal), Gosu::Color::YELLOW)
+        end
       end
     end
   end
