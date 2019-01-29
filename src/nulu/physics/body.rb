@@ -2,23 +2,23 @@ module Nulu
 
   class Body
 
-    attr_reader   :world, :collision_group, :id
+    attr_reader   :world, :group, :id
     attr_reader   :shape
     attr_accessor :velocity, :mass, :friction
     attr_accessor :frictionless, :gravityless
     attr_accessor :normals
 
-    def initialize(world, shape, mass, friction = 0.0, collision_group = :nulu_body_default)
+    def initialize(world:, group:, shape:, mass:, friction:, frictionless:, gravityless:)
       @world = world
-      @collision_group = collision_group
-      @id = world.add_body(self, collision_group)
+      @group = group
+      @id = world.add_body(self, group)
 
       @shape = shape
       @mass = Float(mass)
       @friction = Float(friction)
       @velocity = Nulu::Vector.new(0, 0)
-      @frictionless = false
-      @gravityless = false
+      @frictionless = frictionless
+      @gravityless = gravityless
 
       @normals = []
     end

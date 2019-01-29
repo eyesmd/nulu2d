@@ -30,23 +30,23 @@ module Nulu
       @collision_skip = Set.new()
     end
 
-    def add_body(body, collision_group)
+    def add_body(body, group)
       id = @current_id
       @current_id += 1
       @bodies << body
-      @collision_enabler.add(body, collision_group) # TODO: Raise domain specific error on limit reached
+      @collision_enabler.add(body, group) # TODO: Raise domain specific error on limit reached
       return id
     end
 
+    DEFAULT_GROUP = :nulu_default
 
-    def make_body(shape, mass, friction = 0.0, collision_group = :nulu_world_default)
-      return Body.new(self, shape, mass, friction, collision_group)
+
+    def make_body(shape:, group: DEFAULT_GROUP, mass: INF, friction: 0.0, frictionless: false, gravityless: false)
+      return Body.new(world: self, shape: shape, mass: mass, friction: friction, group: group, frictionless: frictionless, gravityless: gravityless)
     end
 
-    def make_static_body(shape, friction = 0.0, collision_group = :nulu_world_default)
-      body = Body.new(self, shape, INF, friction, collision_group)
-      body.gravityless = true
-      return body
+    def make_static_body(shape:, group: DEFAULT_GROUP, friction: 0.0)
+      return Body.new(world: self, shape: shape, mass: INF, friction: friction, group: group, frictionless: false, gravityless: true)
     end
 
 

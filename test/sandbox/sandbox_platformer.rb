@@ -11,20 +11,20 @@ class SandboxPlatformer < Sandbox
 
     @world = Nulu::World.new()
 
-    @mc = @world.make_body(Nulu::Rectangle.new(50, 50, Nulu::Point.new(WIDTH / 2.0 - 300, HEIGHT - 300)), 15, 1.0)
+    @mc = @world.make_body(shape: Nulu::Rectangle.new(50, 50, Nulu::Point.new(WIDTH / 2.0 - 300, HEIGHT - 300)), mass: 15, friction: 1.0)
     @mc.frictionless = true
 
     @floors = [
-      @world.make_static_body(Nulu::Rectangle.new(300, 200, Nulu::Point.new(0, 0)), 0.3),
-      @world.make_static_body(Nulu::Rectangle.new(700, 200, Nulu::Point.new(600, 100)), 0.3)
-      ]
+      @world.make_static_body(shape: Nulu::Rectangle.new(300, 200, Nulu::Point.new(0, 0)), friction: 0.3),
+      @world.make_static_body(shape: Nulu::Rectangle.new(700, 200, Nulu::Point.new(600, 100)), friction: 0.3)
+    ]
 
     @horizontal_platforms = [
-      @world.make_static_body(Nulu::Rectangle.new(100, 10, Nulu::Point.new(300, 225)), 0.3),
+      @world.make_static_body(shape: Nulu::Rectangle.new(100, 10, Nulu::Point.new(300, 225)), friction: 0.3),
     ]
 
     @vertical_platforms = [
-      @world.make_static_body(Nulu::Rectangle.new(100, 10, Nulu::Point.new(50, 210)), 0.3),
+      @world.make_static_body(shape: Nulu::Rectangle.new(100, 10, Nulu::Point.new(50, 210)), friction: 0.3),
     ]
 
     @bodies = [@mc] + @floors + @horizontal_platforms + @vertical_platforms
