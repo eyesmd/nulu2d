@@ -1,5 +1,5 @@
 require "minitest/autorun"
-require_relative "../src/nulu"
+require_relative "../../src/nulu"
 
 
 class TestPolygon < Minitest::Test

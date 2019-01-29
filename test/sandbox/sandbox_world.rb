@@ -1,17 +1,14 @@
 require "gosu"
-require_relative "../src/nulu"
+require_relative "../../src/nulu"
 require 'pry'
+require_relative "sandbox"
 
-class Sandbox < Gosu::Window
+class SandboxWorld < Sandbox
   WIDTH, HEIGHT = 1000, 600
   CAMERA_ZOOM = 1.0
 
   def initialize
     super WIDTH, HEIGHT
-    self.caption = "Sandbox"
-
-    @elapsed = 0
-    @active_keys = []
 
     @world = Nulu::World.new()
     @mc = @world.make_body(Nulu::Rectangle.new(100, 100, Nulu::Point.new(WIDTH / 2.0 - 300, HEIGHT - 300)), 15, 0.0)
@@ -24,19 +21,11 @@ class Sandbox < Gosu::Window
     @objects = [@mc, @floor, @solid_box, @pass_box]
   end
 
-  # LOOP
-  # -----
-
   def update()
-    delta = ((Gosu.milliseconds() || 0) - @elapsed) / 100.0
-    @elapsed = Gosu.milliseconds() || 0
+    super()
     read_keyboard()
-    @world.update(delta)
+    @world.update(@delta)
   end
-
-
-  # CONTROLLING
-  # +++++++++++
 
   def read_keyboard()
     @active_keys.each do |key_id|
@@ -61,43 +50,10 @@ class Sandbox < Gosu::Window
     end
   end
 
-  def button_down(id)
-    @active_keys << id
-    case id
-      when Gosu::KB_ESCAPE
-        close()
-    end
-  end
-
-  def button_up(id)
-    @active_keys.delete(id)
-  end
-
-
-  # DRAWING
-  # +++++++
-
   def draw
-    Gosu.scale(CAMERA_ZOOM, -CAMERA_ZOOM, WIDTH/2, HEIGHT/2 - 100) do
-      @objects.each do |body|
-        draw_polygon(body.shape, Gosu::Color::WHITE)
-        draw_segment(Nulu::Segment.new(body.center, body.center + body.velocity), Gosu::Color::FUCHSIA)
-        body.normals.each do |normal|
-          draw_segment(Nulu::Segment.new(body.center, body.center + normal), Gosu::Color::YELLOW)
-        end
-      end
-    end
-  end
-
-  def draw_segment(segment, color=Gosu::Color::WHITE)
-    Gosu::draw_line(segment.a.x, segment.a.y, color,
-                    segment.b.x, segment.b.y, color, 100)
-  end
-
-  def draw_polygon(polygon, color=Gosu::Color::WHITE)
-    polygon.segments.each{|s| draw_segment(s, color)}
+    draw_bodies(@objects, 0, self.height/2, 1.0)
   end
 
 end
 
-Sandbox.new.show()
+SandboxWorld.new.show()

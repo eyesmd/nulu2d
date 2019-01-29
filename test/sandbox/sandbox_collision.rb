@@ -1,8 +1,6 @@
-require "gosu"
-require_relative "../src/nulu"
+require_relative "sandbox"
 
-class Sandbox < Gosu::Window
-  WIDTH, HEIGHT = 640, 480
+class SandboxCollision < Sandbox
   IMG_CREATE_MODE = Gosu::Image.from_text("Create Mode", 30)
   IMG_DRAG_MODE = Gosu::Image.from_text("Drag Mode", 30)
   IMG_HELP = Gosu::Image.from_text("Q - Create Mode\nW - Drag Mode", 20)
@@ -11,8 +9,7 @@ class Sandbox < Gosu::Window
   attr_accessor :prev_mouse
 
   def initialize
-    super WIDTH, HEIGHT
-    self.caption = "Sandbox"
+    super 640, 480
     self.mode = :drag
     self.polygons = Array.new
     self.polygons << Nulu::Polygon.new(Nulu::Point.new(50, 50),
@@ -27,6 +24,7 @@ class Sandbox < Gosu::Window
   end
 
   def update
+    super()
     case self.mode
       when :create
         create_update
@@ -62,9 +60,9 @@ class Sandbox < Gosu::Window
     IMG_HELP.draw(0, 0, 0)
     case self.mode
       when :create
-        IMG_CREATE_MODE.draw(0, HEIGHT - IMG_CREATE_MODE.height, 0)
+        IMG_CREATE_MODE.draw(0, self.height - IMG_CREATE_MODE.height, 0)
       when :drag
-        IMG_DRAG_MODE.draw(0, HEIGHT - IMG_CREATE_MODE.height, 0)
+        IMG_DRAG_MODE.draw(0, self.height - IMG_CREATE_MODE.height, 0)
     end
 
     case self.mode
@@ -75,7 +73,7 @@ class Sandbox < Gosu::Window
     end
   end
 
-  def button_down(id)
+  def key_down(id)
     case id
       when Gosu::KB_Q
         self.mode = :create
@@ -92,7 +90,7 @@ class Sandbox < Gosu::Window
     end
   end
 
-  def button_up(id)
+  def key_up(id)
     case self.mode
       when :create
         create_button_up(id)
@@ -172,31 +170,4 @@ class Sandbox < Gosu::Window
   end
 end
 
-# Helpers
-def draw_circle(center, radius, color=Gosu::Color::WHITE)
-  stp = radius/5.0
-  [-1,1].each do |sign|
-    (-radius...radius).step(stp) do |x|
-      ax = center.x + x
-      ay = center.y + sign * Math.sqrt(radius**2 - x**2)
-      bx = center.x + x + stp
-      by = center.y + sign * Math.sqrt(radius**2 - ((x + stp).round)**2)
-      Gosu::draw_line(ax, ay, color, bx, by, color, 100)
-    end
-  end
-end
-
-def draw_point(point, color=Gosu::Color::WHITE)
-  draw_circle(point, 3, color)
-end
-
-def draw_segment(segment, color=Gosu::Color::WHITE)
-  Gosu::draw_line(segment.a.x, segment.a.y, color,
-                  segment.b.x, segment.b.y, color, 100)
-end
-
-def draw_polygon(polygon, color=Gosu::Color::WHITE)
-  polygon.segments.each{|s| draw_segment(s, color)}
-end
-
-Sandbox.new.show
+SandboxCollision.new.show
