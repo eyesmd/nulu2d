@@ -32,6 +32,7 @@ class Sandbox < Gosu::Window
   # +++++++
 
   def button_down(id)
+    @button_down
     @active_keys << id
     case id
       when Gosu::KB_ESCAPE

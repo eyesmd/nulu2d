@@ -1,7 +1,7 @@
 require "minitest/autorun"
 require_relative "../../src/nulu"
 
-class TestXXX < Minitest::Test
+class TestGraph < Minitest::Test
 
   def test_nodes_accessors
     graph = Nulu::Graph.new()
