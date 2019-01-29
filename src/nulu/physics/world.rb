@@ -22,6 +22,7 @@ module Nulu
     ##
 
     COLLISION_LOOP_TRIES = 100
+    DEFAULT_GROUP = :nulu_default
 
     def initialize()
       @bodies = []
@@ -30,16 +31,6 @@ module Nulu
       @collision_skip = Set.new()
     end
 
-    def add_body(body, group)
-      id = @current_id
-      @current_id += 1
-      @bodies << body
-      @collision_enabler.add(body, group) # TODO: Raise domain specific error on limit reached
-      return id
-    end
-
-    DEFAULT_GROUP = :nulu_default
-
 
     def make_body(shape:, group: DEFAULT_GROUP, mass: INF, friction: 0.0, frictionless: false, gravityless: false)
       return Body.new(world: self, shape: shape, mass: mass, friction: friction, group: group, frictionless: frictionless, gravityless: gravityless)
@@ -47,6 +38,14 @@ module Nulu
 
     def make_static_body(shape:, group: DEFAULT_GROUP, friction: 0.0)
       return Body.new(world: self, shape: shape, mass: INF, friction: friction, group: group, frictionless: false, gravityless: true)
+    end
+
+    def add_body(body, group)
+      id = @current_id
+      @current_id += 1
+      @bodies << body
+      @collision_enabler.add(body, group) # TODO: Raise domain specific error on limit reached
+      return id
     end
 
 
@@ -186,9 +185,7 @@ module Nulu
 
     def each_collidable_bodies()
       @collision_enabler.each_collidable_pair do |a, b|
-        if !@collision_skip.include?(SortedPair.new(a.id, b.id))
-          yield(a, b)
-        end
+        yield(a, b) unless @collision_skip.include?(SortedPair.new(a.id, b.id))
       end
     end
 

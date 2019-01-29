@@ -39,5 +39,16 @@ module Nulu
     def move_x(offset_x) @shape.move_x(offset_x) end
     def move_y(offset_y) @shape.move_y(offset_y) end
 
+    # Heuristic to find the normal exerted from the floor
+    def floor_normal
+      floor_normal = Nulu::Point.new(0, 0)
+      normals.each do |normal|
+        if normal.y > floor_normal.y
+          floor_normal = normal 
+        end
+      end
+      return floor_normal
+    end
+
   end
 end
