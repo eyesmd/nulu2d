@@ -49,19 +49,19 @@ module Nulu
     end
 
 
-    def disable_collision_within(group)
+    def disable_collision_within_group(group)
       @collision_enabler.disable_collision_within(group)
     end
 
-    def disable_collision_between(group_a, group_b)
+    def disable_collision_between_groups(group_a, group_b)
       @collision_enabler.disable_collision_between(group_a, group_b)
     end
 
-    def enable_collision_within(group)
+    def enable_collision_within_group(group)
       @collision_enabler.enable_collision_within(group)
     end
 
-    def enable_collision_between(group_a, group_b)
+    def enable_collision_between_groups(group_a, group_b)
       @collision_enabler.enable_collision_between(group_a, group_b)
     end
 
@@ -69,7 +69,7 @@ module Nulu
       @collision_skip.add(SortedPair.new(a.id, b.id))
     end
 
-    def renable_collision_between_bodies(a, b)
+    def enable_collision_between_bodies(a, b)
       @collision_skip.delete(SortedPair.new(a.id, b.id))
     end
 
