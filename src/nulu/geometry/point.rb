@@ -3,6 +3,7 @@ module Nulu
   class Point
 
     ## Initialization
+    ## ++++++++++++++
     def initialize(x=0, y=0)
       @x = Float(x)
       @y = Float(y)
@@ -21,6 +22,7 @@ module Nulu
 
 
     ## Accessors
+    ## +++++++++
     attr_accessor :x, :y
   
     def angle() # Normalized, [0..2PI]
@@ -41,6 +43,7 @@ module Nulu
     
   
     ## Operators
+    ## +++++++++
     def -@
       Point.new(-@x, -@y)
     end
@@ -55,7 +58,6 @@ module Nulu
     
     # Scalar product
     def *(arg)
-      # TODO: define the operation correctly upon Numeric * Point (should I extend Numeric?)
       if arg.is_a?(Numeric)
         return Point.new(@x * arg, @y * arg)
       elsif arg.is_a?(Point)
@@ -73,16 +75,6 @@ module Nulu
     def /(scalar)
       self * (1.0/scalar)
     end
-    
-    def point_to(x, y)
-      @x = Float(x)
-      @y = Float(y)
-    end
-    
-    def direct_to(angle, norm=1)
-      @x = Math::cos(angle) * Float(norm)
-      @y = Math::sin(angle) * Float(norm)
-    end
   
     def unit
       self / norm()
@@ -93,8 +85,10 @@ module Nulu
       left ? Point.new(-@y, @x) : Point.new(@y, -@x)
     end
 
-    def zero?
-      @x.abs < EPS && @y.abs < EPS
+    def trim(scalar)
+      trimmed_point = self.dup()
+      trimmed_point.norm = Float(scalar) if norm > scalar
+      return trimmed_point
     end
 
     # Scalar projection
@@ -107,10 +101,6 @@ module Nulu
       p.unit() * sproject_to(p)
     end
 
-    def trim(scalar)
-      self.norm = Float(scalar) if norm > scalar
-    end
-
     # decomposes self into orthogonal vectors
     # [parallel to 'v', perpendicular to 'v']
     def decompose_into(v)
@@ -118,13 +108,27 @@ module Nulu
       return [parallel_decomposition, self - parallel_decomposition]
     end
 
+
+    ## Mutators
+    ## ++++++++
+    def point_to(x, y)
+      @x = Float(x)
+      @y = Float(y)
+    end
+    
+    def direct_to(angle, norm=1)
+      @x = Math::cos(angle) * Float(norm)
+      @y = Math::sin(angle) * Float(norm)
+    end
+
     def zero
       @x = 0
-      @y = 0      
+      @y = 0
     end
 
     
     ## Comparisons
+    ## +++++++++++
     def ==(p)
       (@x - p.x).abs < EPS && (@y - p.y).abs < EPS
     end
@@ -139,6 +143,10 @@ module Nulu
   
     def perpendicular?(v)
       (self * v).abs < EPS
+    end
+
+    def zero?
+      @x.abs < EPS && @y.abs < EPS
     end
   end
 

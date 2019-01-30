@@ -127,8 +127,7 @@ class TestPoint < Minitest::Test
   end
 
   def test_trim
-    p = Nulu::Point.new(0, -1)
-    p.trim(0.2)
+    p = Nulu::Point.new(0, -1).trim(0.2)
     assert_in_delta 0.2, p.norm
     assert_in_delta 2.0*Math::PI*3.0/4.0, p.angle
   end
