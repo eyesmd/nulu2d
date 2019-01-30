@@ -91,6 +91,18 @@ module Nulu
       return trimmed_point
     end
 
+    def invert()
+      return -self
+    end
+
+    def invert_x()
+      return Point.new(-@x, @y)
+    end
+
+    def invert_y()
+      return Point.new(@x, -@y)
+    end
+
     # Scalar projection
     def sproject_to(p)
       self * p.unit()

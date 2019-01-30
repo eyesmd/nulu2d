@@ -15,7 +15,7 @@ module Nulu
 
 
     ## Accesors
-    attr_accessor :vertex
+    attr_reader :vertex
 
     def segments
       segments = Array.new

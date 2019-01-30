@@ -115,6 +115,18 @@ class TestPoint < Minitest::Test
     assert p2, p2.vproject_to(p1)
   end
 
+  def test_inverts
+    p = Nulu::Point.new(1, 1).invert()
+    assert_equal (-1), p.x
+    assert_equal (-1), p.y
+    p = Nulu::Point.new(1, 1).invert_x()
+    assert_equal (-1), p.x
+    assert_equal 1, p.y
+    p = Nulu::Point.new(1, 1).invert_y()
+    assert_equal 1, p.x
+    assert_equal (-1), p.y
+  end
+
   def test_zero
     assert !Nulu::Point.new(0, -1).zero?
     assert Nulu::Point.new(0, 0).zero?
