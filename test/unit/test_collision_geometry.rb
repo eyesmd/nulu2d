@@ -2,31 +2,31 @@ require "minitest/autorun"
 require_relative "../../src/nulu"
 
 class TestCollision < Minitest::Test
-  def test_scalar_intersection_regular
+  def test_parametric_intersection_regular
     l1 = Nulu::Segment.make(:center => Nulu::Point.new(0, 0),
                             :direction => Nulu::Point.new(-0.5, -1))
     l2 = Nulu::Segment.make(:center => Nulu::Point.new(0, 3),
                             :direction => Nulu::Point.new(1, -1))
-    t1, t2 = Nulu::Collision::scalar_intersection(l1, l2)
+    t1, t2 = Nulu::Collision::parametric_intersection(l1, l2)
     assert_equal (-2), t1
     assert_equal 1, t2
-    t2, t1 = Nulu::Collision::scalar_intersection(l2, l1)
+    t2, t1 = Nulu::Collision::parametric_intersection(l2, l1)
     assert_equal (-2), t1
     assert_equal 1, t2
   end
 
-  def test_scalar_intersection_parallel
+  def test_parametric_intersection_parallel
     l1 = Nulu::Segment.make(:center => Nulu::Point.new(0, 3),
                             :direction => Nulu::Point.new(1, -1))
     l2 = Nulu::Segment.make(:center => Nulu::Point.new(1, 0),
                             :direction => Nulu::Point.new(1, -1))
-    t1, _ = Nulu::Collision::scalar_intersection(l2, l1)
+    t1, _ = Nulu::Collision::parametric_intersection(l2, l1)
     assert_nil t1
-    t1, _ = Nulu::Collision::scalar_intersection(l1, l1)
+    t1, _ = Nulu::Collision::parametric_intersection(l1, l1)
     assert_nil t1
   end
 
-  def test_linear_intersection
+  def test_intersection
     a = Nulu::Point.new(0, 1)
     b = Nulu::Point.new(1, 1)
     c = Nulu::Point.new(1, 0)
@@ -35,13 +35,13 @@ class TestCollision < Minitest::Test
     s1 = Nulu::Segment.new(a, c)
     s2 = Nulu::Segment.new(d, e)
     assert_equal Nulu::Point.new(0.5, 0.5),
-                 Nulu::Collision::linear_intersection(s1, s2)
+                 Nulu::Collision::intersection(s1, s2)
     s1 = Nulu::Segment.new(d, c);
     s2 = Nulu::Segment.new(a, b);
-    assert_nil Nulu::Collision::linear_intersection(s1, s2)
+    assert_nil Nulu::Collision::intersection(s1, s2)
     s1 = Nulu::Segment.new(a, c)
     s2 = Nulu::Segment.new(e, b)
-    assert_nil Nulu::Collision::linear_intersection(s1, s2)
+    assert_nil Nulu::Collision::intersection(s1, s2)
   end
 
   def test_mtv_nil

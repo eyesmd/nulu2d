@@ -77,8 +77,8 @@ module Nulu
     end
 
     # Returns the point on which two segments intersect, or nil if they don't
-    def self.linear_intersection(la, lb)
-      t1, t2 = scalar_intersection(la, lb)
+    def self.intersection(la, lb)
+      t1, t2 = parametric_intersection(la, lb)
       if t1 && (t1 >= 0 - EPS && t1 <= 1 + EPS) &&
                (t2 >= 0 - EPS && t2 <= 1 + EPS)
         return la.a + (la.b - la.a) * t1
@@ -86,13 +86,13 @@ module Nulu
         return nil
       end
     end
-  
+
     # Returns a scalar for each segment, which is the value at which 
     # the parametric form of the segment must be evaluated to, to yield
     # the intersection between the segments
     # (from maxx.ru, the algo consists of solving a 2x2 equation of the
     # segments's parametric equations)
-    def self.scalar_intersection(la, lb)
+    def self.parametric_intersection(la, lb)
       c = la.center
       v = la.direction
       d = lb.center

@@ -113,7 +113,7 @@ Esta sistema puede resolverse de manera con el método de Gauss, que no es tan t
 
 El pseudo de la rutina sería:
 \begin{algorithmic} \\
-\Function{scalar\_intersection}{$C, V, D, W$}
+\Function{parametric\_intersection}{$C, V, D, W$}
     \State $ndet \gets V.x*W.y - V.y*W.x$         \Comment ¡Es $-det$, no $det$!
     \If {$ndet \approx 0}$
         \State \Return $nil$
