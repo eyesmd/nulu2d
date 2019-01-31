@@ -32,7 +32,7 @@ module Nulu
     end
 
 
-    def make_body(shape:, group: DEFAULT_GROUP, mass: INF, friction: 0.0, frictionless: false, gravityless: false)
+    def make_body(shape:, group: DEFAULT_GROUP, mass: 1.0, friction: 0.0, frictionless: false, gravityless: false)
       return Body.new(world: self, shape: shape, mass: mass, friction: friction, group: group, frictionless: frictionless, gravityless: gravityless)
     end
 

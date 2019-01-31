@@ -59,12 +59,14 @@ class Sandbox < Gosu::Window
   # +++++++
 
   def draw_bodies(bodies, offset_x = 0, offset_y = 0, zoom = 1.0)
-    Gosu.scale(zoom, -zoom, offset_x, offset_y) do
-      bodies.each do |body|
-        draw_polygon(body.shape, Gosu::Color::WHITE)
-        draw_segment(Nulu::Segment.new(body.center, body.center + body.velocity), Gosu::Color::FUCHSIA)
-        body.normals.each do |normal|
-          draw_segment(Nulu::Segment.new(body.center, body.center + normal), Gosu::Color::YELLOW)
+    Gosu.scale(zoom, -zoom, width/2, height/2) do
+      Gosu.translate(offset_x, offset_y) do
+        bodies.each do |body|
+          draw_polygon(body.shape, Gosu::Color::WHITE)
+          draw_segment(Nulu::Segment.new(body.center, body.center + body.velocity), Gosu::Color::FUCHSIA)
+          body.normals.each do |normal|
+            draw_segment(Nulu::Segment.new(body.center, body.center + normal), Gosu::Color::YELLOW)
+          end
         end
       end
     end
