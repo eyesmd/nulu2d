@@ -9,30 +9,22 @@ Rake::TestTask.new() do |t|
 end
 
 task :sandbox, [:option] do |t, args|
-  puts ""
   Dir.chdir("./test/sandbox/") do
-
     filenames = Dir.glob("sandbox_*.rb")
-    selected_sandbox = args[:option]
+    selected_sandbox = args[:option] ? args[:option].to_i : nil
 
     if selected_sandbox
-      run_ruby_script(filenames, selected_sandbox.to_i)
+      if selected_sandbox >= 1 && selected_sandbox <= filenames.size()
+        begin
+          eval("ruby '#{filenames[selected_sandbox-1]}'")
+        rescue Exception
+        end
+      else
+        puts "Invalid sandbox index"
+      end
     else
       puts "Available sandboxes..."
       filenames.each_with_index{ |filename, i| puts " #{i+1} - #{filename}" }
-      print "Select which sandbox to run (0 to abort): "
-      option = STDIN.gets.chomp.to_i
-      run_ruby_script(filenames, option)
-    end
-  end
-  puts ""
-end
-
-def run_ruby_script(filenames, idx)
-  if idx >= 1 && idx <= filenames.size()
-    begin
-      eval("ruby '#{filenames[idx-1]}'")
-    rescue Exception
     end
   end
 end
