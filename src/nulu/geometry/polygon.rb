@@ -99,6 +99,34 @@ module Nulu
     def move_y(oy)
       @vertex.each{|p| p.y += oy}
     end
+
+
+    ## Comparisons
+    ## +++++++++++
+    def ==(other)
+      # It yields false on translated or rotated polygons!
+      # Supposes no repeated points
+      return false unless self.vertex.size == other.vertex.size
+      vertex_size = self.vertex.size
+
+      offset = nil
+      (0...vertex_size).each do |i|
+        if self.vertex[0] == other.vertex[i]
+          offset = i
+          break
+        end
+      end
+
+      return false unless offset
+
+      (0...vertex_size).all? do |i|
+        self.vertex[i] == other.vertex[(offset + i) % vertex_size]
+      end ||
+      (0...vertex_size).all? do |i|
+        self.vertex[i] == other.vertex[(offset - i) % vertex_size]
+      end
+    end
+
   end
 
 end

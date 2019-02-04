@@ -3,15 +3,36 @@ require_relative "../../src/nulu"
 
 
 class TestPolygon < Minitest::Test
-  def test_init
-    p = Nulu::Polygon.new(Nulu::Point.new(-1, 0),
+  def test_equality
+    p1 = Nulu::Polygon.new(Nulu::Point.new(-1, 0),
                           Nulu::Point.new(1, 2),
                           Nulu::Point.new(1, 0))
-    assert_equal [Nulu::Point.new(-1, 0), Nulu::Point.new(1, 2),
-                  Nulu::Point.new(1, 0)],
-                 p.vertex
-    assert_raises(RuntimeError) { Nulu::Polygon.new(1, 2, 3) }
-    assert_raises(RuntimeError) { Nulu::Polygon.new(Nulu::Point.new(-1, 0)) }
+    p2 = Nulu::Polygon.new(Nulu::Point.new(1, 2),
+                          Nulu::Point.new(1, 0),
+                          Nulu::Point.new(-1, 0))
+    p3 = Nulu::Polygon.new(Nulu::Point.new(1, 0),
+                          Nulu::Point.new(-1, 0),
+                          Nulu::Point.new(1, 2))
+    pr1 = Nulu::Polygon.new(Nulu::Point.new(1, 0),
+                          Nulu::Point.new(1, 2),
+                          Nulu::Point.new(-1, 0))
+    pr2 = Nulu::Polygon.new(Nulu::Point.new(-1, 0),
+                          Nulu::Point.new(1, 0),
+                          Nulu::Point.new(1, 2))
+    pr3 = Nulu::Polygon.new(Nulu::Point.new(1, 2),
+                          Nulu::Point.new(-1, 0),
+                          Nulu::Point.new(1, 0))
+    assert_equal p1, p2
+    assert_equal p2, p3
+    assert_equal p3, p1
+
+    assert_equal pr1, pr2
+    assert_equal pr2, pr3
+    assert_equal pr3, pr1
+
+    assert_equal p1, pr1
+    assert_equal p2, pr2
+    assert_equal p3, pr3
   end
 
   def test_segments
