@@ -86,6 +86,24 @@ module Nulu
       self.move_y(new_top - self.top)
     end
 
+    # Source: https://en.wikipedia.org/wiki/Centroid#Centroid_of_a_polygon
+    def centroid()
+      signed_area = 0.0
+      centroid = Nulu::Point.new(0, 0)
+
+      (0...@vertex.size-1).each do |i|
+        centroid += (@vertex[i] + @vertex[i+1]) * (@vertex[i] ** @vertex[i+1])
+        signed_area += @vertex[i] ** @vertex[i+1]
+      end
+      signed_area += @vertex.last ** @vertex.first
+      centroid += (@vertex.last + @vertex.first) * (@vertex.last ** @vertex.first)
+
+      signed_area /= 2.0
+      centroid /= (6.0 * signed_area)
+
+      return centroid
+    end
+
 
     ## Transformation
     def move(v)

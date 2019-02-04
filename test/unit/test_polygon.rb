@@ -158,4 +158,22 @@ class TestPolygon < Minitest::Test
     assert_equal Nulu::Point.new(0, -1), p.vertex.first
     assert_equal Nulu::Point.new(0, 0), p.vertex.last
   end
+
+  def test_centroid_simple
+    p = Nulu::Polygon.new(
+      Nulu::Point.new(0, 0),
+      Nulu::Point.new(1, 0),
+      Nulu::Point.new(0, 1))
+    assert_equal p.centroid, (p.vertex.reduce(&:+) / 3.0)
+  end
+
+  def test_centroid_complex
+    p = Nulu::Polygon.new(
+      Nulu::Point.new(45.3142533036254, -93.47527313511819),
+      Nulu::Point.new(45.31232182518015, -93.34893036168069),
+      Nulu::Point.new(45.23694281999268, -93.35167694371194),
+      Nulu::Point.new(45.23500870841669, -93.47801971714944),
+      Nulu::Point.new(45.3142533036254, -93.47527313511819))
+    assert_equal p.centroid, Nulu::Point.new(45.27463866133501, -93.41400121829719)
+  end
 end
