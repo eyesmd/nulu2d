@@ -3,7 +3,7 @@ require_relative "../../src/nulu"
 
 
 class TestPolygon < Minitest::Test
-  def test_equality
+  def test_equals_polygons
     p1 = Nulu::Polygon.new(Nulu::Point.new(-1, 0),
                           Nulu::Point.new(1, 2),
                           Nulu::Point.new(1, 0))
@@ -33,6 +33,16 @@ class TestPolygon < Minitest::Test
     assert_equal p1, pr1
     assert_equal p2, pr2
     assert_equal p3, pr3
+  end
+
+  def test_unequal_polygons
+    p = Nulu::Rectangle.new(1, 1)
+    q = Nulu::Rectangle.new(2, 1)
+    r = Nulu::Rectangle.new(1, 1, Nulu::Point.new(10, 10))
+
+    assert p != q
+    assert p != r
+    assert q != r
   end
 
   def test_segments
