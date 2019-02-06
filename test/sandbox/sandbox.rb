@@ -10,12 +10,18 @@ class Sandbox < Gosu::Window
   # Initialization
   # ++++++++++++++
 
-  def initialize(width = 640, height = 480, caption = "Sandbox")
+  def initialize(width = 1000, height = 600, caption = "Sandbox")
     super width, height
     self.caption = caption
     @delta = 0.0
     @elapsed = 0.0
     @active_keys = []
+    @down_keys = []
+    @up_keys = []
+  end
+
+  def needs_cursor?
+    return true
   end
 
 
@@ -92,6 +98,11 @@ class Sandbox < Gosu::Window
   def draw_segment(segment, color=Gosu::Color::WHITE)
     Gosu::draw_line(segment.a.x, segment.a.y, color,
                     segment.b.x, segment.b.y, color, 100)
+  end
+
+  def draw_arrow(arrow, color=Gosu::Color::WHITE)
+    draw_segment(arrow, color)
+    draw_point(arrow.b, color)
   end
 
   def draw_polygon(polygon, color=Gosu::Color::WHITE)

@@ -3,8 +3,8 @@ module Nulu
   class ZZZ
 
     attr_accessor :shape, :position, :orientation
-    attr_accessor :mass
-    attr_accessor :inertia
+    attr_accessor :mass, :linear_velocity
+    attr_accessor :inertia, :angular_velocity
 
     def initialize(shape:, mass:, inertia:, position:Nulu::Point.new(0, 0), orientation:0)
       @shape = shape
@@ -15,7 +15,10 @@ module Nulu
       @forces = []
       @torque = 0.0
 
-      @center_of_mass = shape.vertex.reduce(&:+) / shape.vertex.size # TODO: Temp
+      @linear_velocity = Nulu::Vector.new(0, 0)
+      @angular_velocity = 0.0
+
+      @center_of_mass = shape.centroid
     end
 
 
@@ -58,6 +61,13 @@ module Nulu
 
     def angular_acceleration()
       self.torque() / @inertia
+    end
+
+    def integrate(delta)
+      @position += self.linear_velocity * delta
+      @orientation += self.angular_velocity * delta
+      @linear_velocity += self.linear_acceleration * delta
+      @angular_velocity += self.angular_acceleration * delta
     end
 
   end
