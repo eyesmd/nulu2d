@@ -118,6 +118,14 @@ module Nulu
       @vertex.each{|p| p.y += oy}
     end
 
+    def rotate_around(angle, anchor)
+      @vertex = @vertex.map { |v| (v - anchor).rotate(angle) + anchor }
+    end
+
+    def rotate(angle)
+      rotate_around(angle, self.centroid)
+    end
+
 
     ## Comparisons
     ## +++++++++++

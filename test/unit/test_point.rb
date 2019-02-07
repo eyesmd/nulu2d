@@ -194,4 +194,10 @@ class TestPoint < Minitest::Test
     assert_equal Nulu::Point.new(0.5, 0.5), parallel
     assert_equal Nulu::Point.new(0.5, -0.5), perpendicular
   end
+
+  def test_rotate
+    p = Nulu::Point.new(1, 0)
+    assert_equal Nulu::Point.new(Math::sqrt(0.5), Math::sqrt(0.5)), p.rotate(Math::PI/4.0)
+    assert_equal Nulu::Point.new(-1.0, 0.0), p.rotate(-3.0*Math::PI)
+  end
 end

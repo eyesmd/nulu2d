@@ -13,7 +13,7 @@ class SandboxZZZ < Sandbox
                                Nulu::Point.new(500, 400),
                                Nulu::Point.new(400, 400)),
       mass: 10.0,
-      inertia: 1000.0)
+      inertia: 10000.0)
     #update_text()
   end
 

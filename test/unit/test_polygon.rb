@@ -176,4 +176,32 @@ class TestPolygon < Minitest::Test
       Nulu::Point.new(45.3142533036254, -93.47527313511819))
     assert_equal p.centroid, Nulu::Point.new(45.27463866133501, -93.41400121829719)
   end
+
+  def test_rotate_around
+    p = Nulu::Polygon.new(
+      Nulu::Point.new(0, 0),
+      Nulu::Point.new(1, 0),
+      Nulu::Point.new(0, 1))
+    p.rotate_around(Math::PI*0.5, Nulu::Point.new(0, 1))
+    
+    assert_equal Nulu::Polygon.new( Nulu::Point.new(0, 1), Nulu::Point.new(1, 1), Nulu::Point.new(1, 2) ), p
+  end
+
+  def test_rotate_around_centroid
+    p = Nulu::Polygon.new(
+      Nulu::Point.new(0, 0),
+      Nulu::Point.new(1, 0),
+      Nulu::Point.new(1, 1),
+      Nulu::Point.new(0, 1))
+    p.rotate(Math::PI*0.25)
+
+    ep = Nulu::Polygon.new(
+      Nulu::Point.new(0, Math::sqrt(0.5)),
+      Nulu::Point.new(Math::sqrt(0.5), 0),
+      Nulu::Point.new(0, -Math::sqrt(0.5)),
+      Nulu::Point.new(-Math::sqrt(0.5), 0))
+    ep.move(Nulu::Point.new(0.5, 0.5))
+    
+    assert_equal ep, p
+  end
 end

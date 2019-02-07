@@ -80,6 +80,12 @@ module Nulu
       self / norm()
     end
 
+    def rotate(angle)
+      rotated_point = self.dup()
+      rotated_point.direct_to(self.angle + angle, self.norm)
+      return rotated_point
+    end
+
     # 90 degrees to the right by default
     def perp(left=false)
       left ? Point.new(-@y, @x) : Point.new(@y, -@x)
