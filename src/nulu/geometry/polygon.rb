@@ -119,7 +119,7 @@ module Nulu
     end
 
     def rotate_around(angle, anchor)
-      @vertex = @vertex.map { |v| (v - anchor).rotate(angle) + anchor }
+      @vertex = @vertex.map { |v| (v - anchor).rotated(angle) + anchor }
     end
 
     def rotate(angle)

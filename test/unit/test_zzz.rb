@@ -23,7 +23,7 @@ class TestZZZ < Minitest::Test
       shape: Nulu::Rectangle.new(2, 2),
       mass: 3.0,
       inertia: 1.0)
-    zzz.shape.move(Nulu::Point.new(-1, -1))
+    zzz.move(Nulu::Point.new(-1, -1))
     zzz.add_force_at(Nulu::Vector.new(1.0, 0.0),  Nulu::Point.new(-1, 0))
     zzz.add_force_at(Nulu::Vector.new(1.0, 0.0),  Nulu::Point.new(1, 0))
 
@@ -54,7 +54,7 @@ class TestZZZ < Minitest::Test
       shape: Nulu::Rectangle.new(2, 2),
       mass: 3.0,
       inertia: 1.0)
-    zzz.shape.move(Nulu::Point.new(-1, -1))
+    zzz.move(Nulu::Point.new(-1, -1))
 
     zzz.add_force_at(Nulu::Vector.new(1.0, 0.0),  Nulu::Point.new(-1, -1))
     zzz.clear_forces()

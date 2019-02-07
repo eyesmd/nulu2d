@@ -56,8 +56,7 @@ module Nulu
       Point.new(@x - p.x, @y - p.y)
     end
     
-    # Scalar product
-    def *(arg)
+    def *(arg) # Scalar product
       if arg.is_a?(Numeric)
         return Point.new(@x * arg, @y * arg)
       elsif arg.is_a?(Point)
@@ -67,8 +66,7 @@ module Nulu
       end
     end
 
-    # Vector product
-    def **(arg)
+    def **(arg) # Vector product
       @x * arg.y - @y * arg.x
     end
     
@@ -80,7 +78,7 @@ module Nulu
       self / norm()
     end
 
-    def rotate(angle)
+    def rotated(angle)
       rotated_point = self.dup()
       rotated_point.direct_to(self.angle + angle, self.norm)
       return rotated_point
@@ -91,37 +89,33 @@ module Nulu
       left ? Point.new(-@y, @x) : Point.new(@y, -@x)
     end
 
-    def trim(scalar)
+    def trimmed(scalar)
       trimmed_point = self.dup()
       trimmed_point.norm = Float(scalar) if norm > scalar
       return trimmed_point
     end
 
-    def invert()
+    def inverted()
       return -self
     end
 
-    def invert_x()
+    def inverted_x()
       return Point.new(-@x, @y)
     end
 
-    def invert_y()
+    def inverted_y()
       return Point.new(@x, -@y)
     end
 
-    # Scalar projection
-    def sproject_to(p)
+    def sproject_to(p) # Scalar projection
       self * p.unit()
     end
 
-    # Vector projection
-    def vproject_to(p)
+    def vproject_to(p) # Vector projection
       p.unit() * sproject_to(p)
     end
 
-    # decomposes self into orthogonal vectors
-    # [parallel to 'v', perpendicular to 'v']
-    def decompose_into(v)
+    def decompose_into(v) # decomposes self into orthogonal vectors
       parallel_decomposition = vproject_to(v)
       return [parallel_decomposition, self - parallel_decomposition]
     end

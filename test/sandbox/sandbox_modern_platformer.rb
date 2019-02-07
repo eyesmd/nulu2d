@@ -76,11 +76,11 @@ class SandboxModernPlatformer < Sandbox
       elsif @active_keys.include?(Gosu::KbRight) && !@active_keys.include?(Gosu::KbLeft)
         @mc.velocity.x += 15
         @mc.frictionless = true
-        @mc.velocity = @mc.velocity.trim(30)
+        @mc.velocity = @mc.velocity.trimmed(30)
       elsif !@active_keys.include?(Gosu::KbRight) && @active_keys.include?(Gosu::KbLeft)
         @mc.velocity.x -= 15
         @mc.frictionless = true
-        @mc.velocity = @mc.velocity.trim(30)
+        @mc.velocity = @mc.velocity.trimmed(30)
       else
         @mc.frictionless = false
       end

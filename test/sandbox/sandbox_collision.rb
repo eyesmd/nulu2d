@@ -37,7 +37,7 @@ class SandboxCollision < Sandbox
 
   def draw
     polygons.each do |p|
-      color = p == selected_polygon ? Gosu::Color::YELLOW : Gosu::Color::RED
+      color = p.equal?(selected_polygon) ? Gosu::Color::YELLOW : Gosu::Color::RED
       draw_polygon(p, color)
     end
 
@@ -53,7 +53,7 @@ class SandboxCollision < Sandbox
 
     polygons.each do |p|
 
-      color = p == selected_polygon ? Gosu::Color::YELLOW : Gosu::Color::RED
+      color = p.equal?(selected_polygon) ? Gosu::Color::YELLOW : Gosu::Color::RED
       draw_polygon(p, color)
     end
 

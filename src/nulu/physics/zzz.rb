@@ -2,9 +2,9 @@ module Nulu
 
   class ZZZ
 
-    attr_accessor :shape
-    attr_accessor :mass, :linear_velocity
-    attr_accessor :inertia, :angular_velocity
+    attr_reader   :shape
+    attr_reader   :mass, :linear_velocity
+    attr_reader   :inertia, :angular_velocity
 
     def initialize(shape:, mass:, inertia:)
       @shape = shape
@@ -16,6 +16,13 @@ module Nulu
       @linear_velocity = Nulu::Vector.new(0, 0)
       @angular_velocity = 0.0
     end
+
+
+    def move(offset) @shape.move(offset) end
+    def move_x(offset_x) @shape.move_x(offset_x) end
+    def move_y(offset_y) @shape.move_y(offset_y) end
+    def rotate_around(angle, anchor) @shape.rotate_around(angle, anchor) end
+    def rotate(angle) @shape.rotate(angle) end
 
 
     def center_of_mass

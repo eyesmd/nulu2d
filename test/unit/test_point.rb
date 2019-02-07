@@ -116,13 +116,13 @@ class TestPoint < Minitest::Test
   end
 
   def test_inverts
-    p = Nulu::Point.new(1, 1).invert()
+    p = Nulu::Point.new(1, 1).inverted()
     assert_equal (-1), p.x
     assert_equal (-1), p.y
-    p = Nulu::Point.new(1, 1).invert_x()
+    p = Nulu::Point.new(1, 1).inverted_x()
     assert_equal (-1), p.x
     assert_equal 1, p.y
-    p = Nulu::Point.new(1, 1).invert_y()
+    p = Nulu::Point.new(1, 1).inverted_y()
     assert_equal 1, p.x
     assert_equal (-1), p.y
   end
@@ -139,7 +139,7 @@ class TestPoint < Minitest::Test
   end
 
   def test_trim
-    p = Nulu::Point.new(0, -1).trim(0.2)
+    p = Nulu::Point.new(0, -1).trimmed(0.2)
     assert_in_delta 0.2, p.norm
     assert_in_delta 2.0*Math::PI*3.0/4.0, p.angle
   end
@@ -197,7 +197,7 @@ class TestPoint < Minitest::Test
 
   def test_rotate
     p = Nulu::Point.new(1, 0)
-    assert_equal Nulu::Point.new(Math::sqrt(0.5), Math::sqrt(0.5)), p.rotate(Math::PI/4.0)
-    assert_equal Nulu::Point.new(-1.0, 0.0), p.rotate(-3.0*Math::PI)
+    assert_equal Nulu::Point.new(Math::sqrt(0.5), Math::sqrt(0.5)), p.rotated(Math::PI/4.0)
+    assert_equal Nulu::Point.new(-1.0, 0.0), p.rotated(-3.0*Math::PI)
   end
 end
