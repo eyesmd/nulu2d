@@ -145,9 +145,36 @@ module Nulu
       (@x - p.x).abs < EPS && (@y - p.y).abs < EPS
     end
   
-    def distance(p)
-      (self - p).norm
+    def distance(other)
+      other.distance_to_point(self)
     end
+
+      def distance_to_point(other_point)
+        (self - other_point).norm
+      end
+
+      def distance_to_segment(other_segment)
+        # If we can trace a line perpendicular to the segment that contains
+        # the point, then said direction is the shortest one. Otherwise, the
+        # point is closest to one of the segments' endpoints.
+        projected_a = other_segment.a.sproject_to(other_segment.direction)
+        projected_b = other_segment.b.sproject_to(other_segment.direction)
+        projected_point = self.sproject_to(other_segment.direction)
+
+        if projected_a <= projected_b
+          projected_min = projected_a
+          projected_max = projected_b
+        else
+          projected_min = projected_b
+          projected_max = projected_a
+        end
+
+        if projected_min <= projected_point && projected_point <= projected_max
+          return (self.sproject_to(other_segment.direction.perp) - other_segment.a.sproject_to(other_segment.direction.perp)).abs
+        else
+          return [self.distance(other_segment.a), self.distance(other_segment.b)].min
+        end
+      end
 
     def parallel?(v)
       (self ** v).abs < EPS

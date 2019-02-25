@@ -144,7 +144,7 @@ class TestPoint < Minitest::Test
     assert_in_delta 2.0*Math::PI*3.0/4.0, p.angle
   end
 
-  def test_distance
+  def test_distance_between_points
     v1 = Nulu::Point.new(2, 1)
     v2 = Nulu::Point.new(5, 5)
     assert Math::sqrt(3**2+4**2), v1.distance(v2)
