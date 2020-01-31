@@ -4,7 +4,7 @@
 
 ## Introduction
 
-Nulu2D is a soon-to-be *physics engine* for game development. It's meant to provide a simple and flexible interface to ease the implementation of game features, which often go against strict physics simulations.
+Nulu2D is a soon-to-be (sike!) *physics engine* for game development. It's meant to provide a simple and flexible interface to ease the implementation of game features, which often go against strict physics simulations.
 
 My current goal is to handle basic rigid body dynamics. I'm making a game alongside the development of this library, in order to find basic use cases in a practical way. I'm coding in Ruby for quick iterating, but when I eventually tackle performance, I'll migrate to a faster language. I'm thinking of C++ or Rust.
 
